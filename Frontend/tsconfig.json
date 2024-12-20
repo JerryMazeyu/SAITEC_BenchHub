@@ -1,0 +1,27 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.vitest.json"
+    }
+  ],
+  "compilerOptions": {
+      "types": ["vite/client"], // 支持 Vite 环境
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "strict": true
+    },
+  // "include": [
+  //     "src/**/*.ts",
+  //     "src/**/*.d.ts",
+  //     "src/**/*.tsx",
+  //     "src/**/*.vue" // 确保包含 .vue 文件
+  //   ]
+}
