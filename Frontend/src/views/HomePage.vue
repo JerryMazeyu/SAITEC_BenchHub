@@ -1,9 +1,13 @@
 <template>
     <div id="app">
-      <Navbar />
+      <!-- <Navbar /> -->
       <main class="homepage">
         <div class="welcome-section">
-          <h2 class="welcome-text">Shanghai Generative AI Testing and Evaluation Center Benchhub</h2>
+          <h2 class="welcome-text">
+          <span v-for="(word, index) in words" :key="index" class="word" @mouseover="hoverEffect" @mouseout="removeEffect">
+            {{ word }}
+          </span>
+        </h2>
           <div id="dynamic-background"></div>
         </div>
       </main>
@@ -11,12 +15,22 @@
   </template>
   
   <script>
-  import Navbar from '@/components/Navbar.vue';
   export default {
-    components: {
-    Navbar,
-  },
     name: "Homepage",
+    data() {
+    return {
+      words: [
+        "Shanghai ",
+        "Generative ",
+        "AI ",
+        "Testing ",
+        "and ",
+        "Evaluation ",
+        "Center ",
+        "Benchhub",
+      ],
+    };
+  },
     mounted() {
       this.addDynamicBackground();
     },
@@ -69,6 +83,12 @@
 
     animate();
   },
+  hoverEffect(event) {
+      event.target.classList.add("hovered");
+    },
+    removeEffect(event) {
+      event.target.classList.remove("hovered");
+    },
 },
 
   };
@@ -116,7 +136,7 @@
     position: relative;
     margin: 0;
     padding: 0px;
-    margin-left: 2%;
+    margin-left: 0%;
     margin-right: 0%;
   }
   
@@ -135,9 +155,25 @@
     top: 0;
     left: 0;
     margin: 0;
-    /* width: 100%; */
+    width: 100%;
     height: 100%;
     z-index: 0;
   }
+
+  .word {
+  margin: 0 5px;
+  display: inline-block;
+  transition: text-shadow 0.5s ease-in-out, color 0.5s ease-in-out; /* 加入缓慢的过渡效果 */
+  cursor: pointer;
+}
+
+  .word.hovered {
+    color: #ffffff; /* 发光的颜色：白色 */
+  text-shadow: 
+    0 0 2px #ffffff, 
+    0 0 4px #ffffff, 
+    0 0 8px #ffffff; /* 减弱发光效果 */
+
+}
   </style>
   

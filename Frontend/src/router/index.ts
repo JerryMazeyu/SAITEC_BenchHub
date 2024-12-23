@@ -9,12 +9,7 @@ const routes = [
     path: '/',
     name: 'Home',
     component: HomePage,
-  },
-//   {
-//     path: '/benchmarks',
-//     name: 'Benchmarks',
-//     component: BenchmarkPage,
-//   },
+  }
 ];
 
 const router = createRouter({
