@@ -1,15 +1,20 @@
-<script setup lang="ts">
-import HomePage from './views/HomePage.vue';
-</script>
-
 <template>
-  <div id="app">
-    <router-view />
-  </div>
+  <n-config-provider :theme="darkTheme">
+    <div id="app">
+      <Navbar />
+      <router-view />
+    </div>
+  </n-config-provider>
 </template>
 
+<script setup lang="ts">
+import Navbar from "@/components/Navbar.vue";
+import { darkTheme } from "naive-ui";
+</script>
+
 <style>
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   margin: 0;
@@ -36,4 +41,3 @@ html, body {
   padding: 0;
 }
 </style>
-
