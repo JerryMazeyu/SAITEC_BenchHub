@@ -67,6 +67,7 @@ export default {
 }
 
 .navbar-links .nav-link {
+  position: relative; /* 确保 ::after 的定位正确 */
   text-decoration: none;
   color: white;
   font-size: 1.2em;
@@ -80,8 +81,6 @@ export default {
   filter: brightness(1.2);
 }
 
-button::after,
-a::after,
 .navbar-links .nav-link::after {
   content: "";
   position: absolute;
@@ -92,12 +91,10 @@ a::after,
   background-color: #f6f8fa;
   border-radius: 50%;
   transform: scale(0);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
   opacity: 0;
 }
 
-button:hover::after,
-a:hover::after,
 .navbar-links .nav-link:hover::after {
   transform: scale(1);
   opacity: 1;

@@ -20,6 +20,14 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  background: linear-gradient(
+    135deg, /* 渐变效果 */
+    black 0%,
+    #2e9475 -20%,
+    black 55%,
+    #109dfa 150%,
+    black 100%
+  );
 }
 
 #app {
@@ -30,14 +38,5 @@ body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-}
-
-.homepage {
-  flex: 1; /* 占据剩余空间 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
-  padding: 0;
 }
 </style>
