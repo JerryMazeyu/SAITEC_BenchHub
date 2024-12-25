@@ -105,14 +105,6 @@
     font-family: sans-serif;
     background-color: #000;
     color: #fff;
-    background: linear-gradient(
-    135deg, /* 渐变效果 */
-    black 0%,
-    #2e9475 -20%,
-    black 55%,
-    #109dfa 150%,
-    black 100%
-  );
   }
   
   .homepage {
@@ -131,13 +123,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
+    width: 100%; /* 确保宽度为 100% */
+    height: 100%; /* 确保高度为 100% */
     position: relative;
     margin: 0;
-    padding: 0px;
-    margin-left: 0%;
-    margin-right: 0%;
+    padding: 0;
   }
   
   .welcome-text {
@@ -155,7 +145,7 @@
     top: 0;
     left: 0;
     margin: 0;
-    width: 100%;
+    /* width: 100%; */
     height: 100%;
     z-index: 0;
   }
