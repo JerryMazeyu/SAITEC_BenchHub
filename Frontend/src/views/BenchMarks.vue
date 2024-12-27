@@ -10,88 +10,92 @@
                 </h3>
             </div>
             <div class="benchmark-intro">
-                <n-flex justify="center" align="center">
+                <n-flex justify="center" size="large" align="center">
                     <!-- Progress Bar on the Left -->
                     <div class="process-bar">
                         <n-space vertical>
-                            <n-steps vertical :current="currentCardIndex" :status="currentStatus">
+                            <n-steps vertical :current="currentCardIndex">
                                 <n-step title="Number of evaluation data" description="" />
                                 <n-step title="Evaluation Dimensions" description="" />
                                 <n-step title="Evaluation Features" description="" />
-                                <n-step title="Summarize" description="" />
+                                <n-step title="Evaluation advantages" description="" />
                             </n-steps>
                         </n-space>
                     </div>
                     <!-- Cards on the Right -->
                     <div class="intro-play">
-                        <n-carousel autoplay>
-                            <n-card class="intro-card" v-if="currentCardIndex === 1" title="Number of evaluation data"
-                                size="large" hoverable>
-                                <n-ul>
-                                    <n-li>Unimodal data: a total of <n-text type="success">
-                                            <n-number-animation :from="0" :to="29819" />
-                                        </n-text> entries</n-li>
-                                    <n-li>Multimoda data: a total of <n-text type="success">
-                                            <n-number-animation :from="0" :to="8189" />
-                                        </n-text> entries</n-li>
-                                    <n-li>Nearly <n-text type="success">
-                                            <n-number-animation :from="0" :to="40000" />
-                                        </n-text> entries of comprehensive international standard dimension test
-                                        datasets</n-li>
-                                </n-ul>
-                            </n-card>
-                            <n-card class="intro-card" v-if="currentCardIndex === 2" title="Evaluation Dimensions"
-                                size="large" hoverable>
-                                <n-ul>
-                                    <n-li>Unimodal tasks: Text classification, math reasoning, and information
-                                        extraction, etc.</n-li>
-                                    <n-li>Multimodal tasks: Image, text, and audio understanding.</n-li>
-                                    <n-li><n-text type="success">
-                                            Safety tasks:
-                                        </n-text>Fairness, compliance, and robustness.</n-li>
-                                    <n-li><n-text type="success">
-                                            Domain-specific tasks:
-                                        </n-text>Evaluate knowledge and reasoning in fields like
-                                        healthcare,
-                                        law, education, and finance.</n-li>
-                                </n-ul>
-                            </n-card>
-                            <n-card class="intro-card" v-if="currentCardIndex === 3" title="Evaluation Features"
-                                size="large" hoverable>
-                                <n-ul>
-                                    <n-li><n-text type="success">
-                                            Aligns with National Standards:
-                                        </n-text>Adheres to “AI Pre-trained Model Part 2: Evaluation Indicators and
-                                        Methods”.</n-li>
-                                    <n-li><n-text type="success">
-                                            Covers Safety Capabilities:
-                                        </n-text>Evaluates fairness, hallucination, and compliance.</n-li>
-                                    <n-li><n-text type="success">
-                                            Assesses Multimodal Capabilities:
-                                        </n-text>Fills gaps in image-text task coverage.</n-li>
-                                    <n-li><n-text type="success">
-                                            Assesses Domain Capabilities:
-                                        </n-text>Improves fine-grained domain-specific coverage lacking in traditional
-                                        datasets.</n-li>
-                                </n-ul>
-                            </n-card>
-                            <n-card class="intro-card" v-if="currentCardIndex === 4" title="Summarize" size="large"
-                                hoverable>
-                                <n-ul>
-                                    <n-li><n-text type="success">
-                                            Comprehensive Evaluation of Basic, Safety, and Domain Capabilities:
-                                        </n-text>Covers basic (unimodal- and multimodal), safety (hallucination,
-                                        fairness, legality,
-                                        robustness), and domain-specific (law, education, medicine, finance)
-                                        capabilities to ensure broad
-                                        and precise evaluation.</n-li>
-                                    <n-li><n-text type="success">
-                                            Fully Automated Evaluation and Reporting:
-                                        </n-text>Automates task execution and result analysis, generating structured
-                                        reports to present
-                                        model performance and evaluation outcomes.</n-li>
-                                </n-ul>
-                            </n-card>
+                        <n-card class="intro-card" v-if="currentCardIndex === 1" title="Number of evaluation data"
+                            size="large" hoverable>
+                            <n-ul>
+                                <n-li>Unimodal data: a total of <n-text type="success">
+                                        <n-number-animation :from="0" :to="29819" />
+                                    </n-text> entries</n-li>
+                                <n-li>Multimoda data: a total of <n-text type="success">
+                                        <n-number-animation :from="0" :to="8189" />
+                                    </n-text> entries</n-li>
+                                <n-li>Nearly <n-text type="success">
+                                        <n-number-animation :from="0" :to="40000" />
+                                    </n-text> entries of comprehensive international standard dimension test
+                                    datasets</n-li>
+                            </n-ul>
+                        </n-card>
+                        <n-card class="intro-card" v-if="currentCardIndex === 2" title="Evaluation Dimensions"
+                            size="large" hoverable>
+                            <n-ul>
+                                <n-li>Unimodal tasks: Text classification, math reasoning, and information
+                                    extraction, etc.</n-li>
+                                <n-li>Multimodal tasks: Image, text, and audio understanding.</n-li>
+                                <n-li><n-text type="success">
+                                        Safety tasks:
+                                    </n-text>Fairness, compliance, and robustness.</n-li>
+                                <n-li><n-text type="success">
+                                        Domain-specific tasks:
+                                    </n-text>Evaluate knowledge and reasoning in fields like
+                                    healthcare,
+                                    law, education, and finance.</n-li>
+                            </n-ul>
+                        </n-card>
+                        <n-card class="intro-card" v-if="currentCardIndex === 3" title="Evaluation Features"
+                            size="large" hoverable>
+                            <n-ul>
+                                <n-li><n-text type="success">
+                                        Aligns with National Standards:
+                                    </n-text>Adheres to “AI Pre-trained Model Part 2: Evaluation Indicators and
+                                    Methods”.</n-li>
+                                <n-li><n-text type="success">
+                                        Covers Safety Capabilities:
+                                    </n-text>Evaluates fairness, hallucination, and compliance.</n-li>
+                                <n-li><n-text type="success">
+                                        Assesses Multimodal Capabilities:
+                                    </n-text>Fills gaps in image-text task coverage.</n-li>
+                                <n-li><n-text type="success">
+                                        Assesses Domain Capabilities:
+                                    </n-text>Improves fine-grained domain-specific coverage lacking in traditional
+                                    datasets.</n-li>
+                            </n-ul>
+                        </n-card>
+                        <n-card class="intro-card" v-if="currentCardIndex === 4" title="Evaluation advantages"
+                            size="large" hoverable>
+                            <n-ul>
+                                <n-li><n-text type="success">
+                                        Comprehensive Evaluation of Basic, Safety, and Domain Capabilities:
+                                    </n-text>Covers basic (unimodal- and multimodal), safety (hallucination,
+                                    fairness, legality,
+                                    robustness), and domain-specific (law, education, medicine, finance)
+                                    capabilities to ensure broad
+                                    and precise evaluation.</n-li>
+                                <n-li><n-text type="success">
+                                        Fully Automated Evaluation and Reporting:
+                                    </n-text>Automates task execution and result analysis, generating structured
+                                    reports to present
+                                    model performance and evaluation outcomes.</n-li>
+                            </n-ul>
+                        </n-card>
+                    </div>
+                    <div class="statistics">
+                        <n-carousel autoplay show-arrow>
+                            <img class="carousel-img" src="../assets/单模态能力.png">
+                            <img class="carousel-img" src="../assets/多模态能力.png">
                         </n-carousel>
                     </div>
                 </n-flex>
@@ -99,14 +103,17 @@
             <div class="filter-control">
                 <n-flex justify="center" direction="row" wrap="wrap">
                     <div>
-                        <n-button class="filter-buttons" size="large" round>All</n-button>
-                        <n-button class="filter-buttons" size="large" round>Unimodal </n-button>
-                        <n-button class="filter-buttons" size="large" round>Multimodal</n-button>
-                        <n-button class="filter-buttons" size="large" round>Security</n-button>
+                        <n-button class="filter-buttons" size="large" @click="categoryFilter(0)" round>All</n-button>
+                        <n-button class="filter-buttons" size="large" @click="categoryFilter(1)" round>Unimodal
+                        </n-button>
+                        <n-button class="filter-buttons" size="large" @click="categoryFilter(2)"
+                            round>Multimodal</n-button>
+                        <n-button class="filter-buttons" size="large" @click="categoryFilter(3)"
+                            round>Security</n-button>
                     </div>
                     <div class="filter-search">
-                        <n-input />
-                        <n-button type="primary" ghost>
+                        <n-input v-model:value="searchQuery" />
+                        <n-button type="primary" ghost @click="searchFilter()">
                             <template #icon>
                                 <n-icon>
                                     <Search48Regular />
@@ -118,57 +125,131 @@
                 </n-flex>
             </div>
             <div class="filtered-cards">
-                <n-spin :show="show">
-                    <n-flex justify="center">
-                        <n-card class="filtered-card" v-for="(row, index) in datasets" :key="index" hoverable title="">
-                            <div><n-h3><n-text type="success">{{ row.name }}</n-text></n-h3></div>
-                            <div>{{ row.description }}</div>
-                            <div> <n-tag class="filtered-card-tag" round v-for="(tag, index) in row.tag"
-                                    :bordered="false">
-                                    {{ tag }}
-                                </n-tag></div>
-                        </n-card>
-                    </n-flex>
-                </n-spin>
+                <n-flex justify="center">
+                    <n-skeleton v-if="loadingCards" v-for="index in filteredDatasets.length" :width="400" :height="100"  :sharp="false" size="medium" />
+                    <n-card class="filtered-card" v-else v-for="(row, index) in filteredDatasets" :key="index" hoverable
+                        @click="toQA(row)" title="">
+                        <div><n-h3><n-text type="success">{{ row.name }}</n-text></n-h3></div>
+                        <div>{{ row.description }}</div>
+                        <div> <n-tag class="filtered-card-tag" round v-for="(tag, index) in row.tag" :bordered="false">
+                                {{ tag }}
+                            </n-tag></div>
+                    </n-card>
+                </n-flex>
             </div>
         </main>
     </div>
 </template>
 
 <script>
-import { Search48Regular } from '@vicons/fluent'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { Search48Regular } from '@vicons/fluent';
+import { useMessage } from 'naive-ui'
+import { useRouter } from 'vue-router';
+// import {getAllBenchMarks} from '@/api/benchMarks'
+
 export default {
+    name: 'BenchMarks',
     components: {
         Search48Regular
     },
-    data() {
-        return {
-            currentCardIndex: 1,
-            intervalId: null, // 定时器 ID
-            show: false,
-            datasets: [
-                { name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", tag: ["单模态", "文本理解"] },
-                { name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", tag: ["单模态", "文本理解"] },
-                { name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", tag: ["单模态", "文本理解"] },
-            ]
+    setup() {
+        const router = useRouter();
+        const currentCardIndex = ref(1);
+        const intervalId = ref(null);
+        const loadingCards = ref(false);
+        const searchQuery = ref('');
+        const message = useMessage()
+
+        const datasets = [
+            { name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", tag: ["单模态", "文本理解"] },
+            { name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", tag: ["单模态", "文本理解"] },
+            { name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", tag: ["单模态", "文本理解"] },
+            { name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", tag: ["单模态", "文本理解"] },
+            { name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", tag: ["单模态", "文本理解"] },
+            { name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", tag: ["单模态", "文本理解"] },
+            { name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", tag: ["单模态", "文本理解"] },
+            { name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", tag: ["单模态", "文本理解"] },
+            { name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", tag: ["单模态", "文本理解"] },
+        ];
+
+        const filteredDatasets = ref([]);
+
+        const updateCardIndex = () => {
+            currentCardIndex.value = currentCardIndex.value < 4 ? currentCardIndex.value + 1 : 1;
         };
-    },
-    methods: {
-        // 更新卡片索引的方法
-        updateCardIndex() {
-            this.currentCardIndex = this.currentCardIndex < 4 ? this.currentCardIndex + 1 : 1;
-        },
-    },
-    mounted() {
-        // 组件挂载时启动定时器
-        this.intervalId = setInterval(this.updateCardIndex, 8000);
-    },
-    beforeDestroy() {
-        // 组件销毁时清除定时器
-        clearInterval(this.intervalId);
-    },
+
+        const categoryFilter = (option) => {
+            if (option === 0) {
+                loadingCards.value = true
+                filteredDatasets.value = datasets;
+                setTimeout(() => {
+                    loadingCards.value = false;
+                }, 500);
+            } else if (option === 1) {
+                loadingCards.value = true
+                filteredDatasets.value = datasets.filter(item => item.tag.includes("单模态"));
+                setTimeout(() => {
+                    loadingCards.value = false;
+                }, 500);
+            } else if (option === 2) {
+                loadingCards.value = true
+                filteredDatasets.value = datasets.filter(item => item.tag.includes("多模态"));
+                setTimeout(() => {
+                    loadingCards.value = false;
+                }, 500);
+            } else if (option === 3) {
+                loadingCards.value = true
+                filteredDatasets.value = datasets.filter(item => item.tag.includes("安全性"));
+                setTimeout(() => {
+                    loadingCards.value = false;
+                }, 500);
+            }
+        };
+
+        const searchFilter = () => {
+            if (searchQuery.value !== '') {
+                loadingCards.value = true
+                filteredDatasets.value = filteredDatasets.value.filter((item) => item.name.includes(searchQuery.value));
+                setTimeout(() => {
+                    loadingCards.value = false;
+                }, 500);
+            }
+            else {
+                message.warning("Search keyword cannot be empty")
+            }
+        };
+
+        const toQA = (benchmark) => {
+            localStorage.setItem('thisBenchMark', JSON.stringify(benchmark));
+            router.push("/questionAnswer")
+        };
+
+        onMounted(() => {
+            intervalId.value = setInterval(updateCardIndex, 8000);
+            // getAllBenchMarks().then(res=>{
+            //     datasets.value=res.data
+            //     filteredDatasets.value=this.datasets
+            // })
+        });
+
+        onBeforeUnmount(() => {
+            clearInterval(intervalId.value);
+        });
+
+        return {
+            currentCardIndex,
+            loadingCards,
+            searchQuery,
+            filteredDatasets,
+            categoryFilter,
+            searchFilter,
+            toQA
+        };
+    }
 };
 </script>
+
 
 <style>
 .benchmark-title {
@@ -200,11 +281,11 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 50px
+    margin-top: 50px;
 }
 
 .process-bar {
-    margin-right: 50px;
+    margin-right: 0px;
 }
 
 .intro-control {
@@ -224,20 +305,36 @@ export default {
 }
 
 .intro-card {
-    width: 650px;
+    width: 500px;
     flex-shrink: 0;
-    height: 250px;
     /* 防止卡片因容器宽度不足被压缩 */
+    height: 280px;
+    background-color: black;
+    border-radius: 20px
 }
 
-.button-group {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
+.statistics {
+    width: 600px;
+    height: 280px;
+    transition: box-shadow 0.5s ease-in-out;
+}
+
+.statistics:hover {
+    box-shadow: 0 0 5px 2px rgba(99, 226, 183, 0.8);
+    /* 鼠标悬浮时的发光效果 */
+}
+
+.carousel-img {
+    width: 100%;
+    /* 图片宽度自适应轮播框 */
+    height: 100%;
+    /* 图片高度自适应轮播框 */
+    object-fit: fill;
+    /* 填充轮播框，可能裁剪部分图片 */
 }
 
 .filter-control {
-    margin-top: 50px
+    margin-top: 100px
 }
 
 .filter-buttons {
@@ -269,6 +366,7 @@ export default {
     margin: 20px;
     transition: box-shadow 0.5s ease-in-out;
     box-shadow: 0 0 0 rgba(99, 226, 183, 0);
+    cursor: pointer
 }
 
 .filtered-cards .filtered-card:hover {

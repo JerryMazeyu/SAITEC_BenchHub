@@ -15,84 +15,96 @@
   </template>
   
   <script>
-  export default {
-    name: "Homepage",
-    data() {
-    return {
-      words: [
-        "Shanghai ",
-        "Generative ",
-        "AI ",
-        "Testing ",
-        "and ",
-        "Evaluation ",
-        "Center ",
-        "Benchhub",
-      ],
-    };
-  },
-    mounted() {
-      this.addDynamicBackground();
-    },
-    methods: {
-    addDynamicBackground() {
-        const canvas = document.createElement("canvas");
-        canvas.id = "dynamic-background";
-        document.querySelector(".welcome-section").appendChild(canvas);
+import { ref, onMounted } from "vue";
 
-        const ctx = canvas.getContext("2d");
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+export default {
+  name: "Homepage",
+  setup() {
+    const words = ref([
+      "Shanghai ",
+      "Generative ",
+      "AI ",
+      "Testing ",
+      "and ",
+      "Evaluation ",
+      "Center ",
+      "Benchhub",
+    ]);
 
-        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        const particles = [];
+    const addDynamicBackground = () => {
+      const canvas = document.createElement("canvas");
+      canvas.id = "dynamic-background";
+      document.querySelector(".welcome-section").appendChild(canvas);
 
-        for (let i = 0; i < 100; i++) {
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      const particles = [];
+
+      for (let i = 0; i < 100; i++) {
         const charCount = Math.floor(Math.random() * 10) + 1;
         let charGroup = "";
         for (let j = 0; j < charCount; j++) {
-            charGroup += characters.charAt(Math.floor(Math.random() * characters.length));
+          charGroup += characters.charAt(Math.floor(Math.random() * characters.length));
         }
         particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            char: charGroup,
-            fontSize: Math.random() * 2 + 10,
-            dx: (Math.random() - 0.5) * 2,
-            dy: (Math.random() - 0.5) * 2,
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          char: charGroup,
+          fontSize: Math.random() * 2 + 10,
+          dx: (Math.random() - 0.5) * 2,
+          dy: (Math.random() - 0.5) * 2,
         });
-    }
+      }
 
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      particles.forEach((p) => {
-        ctx.font = `${p.fontSize}px Arial`;
-        ctx.fillStyle = "rgba(150, 150, 150, 1)";
-        ctx.fillText(p.char, p.x, p.y);
+        particles.forEach((p) => {
+          ctx.font = `${p.fontSize}px Arial`;
+          ctx.fillStyle = "rgba(150, 150, 150, 1)";
+          ctx.fillText(p.char, p.x, p.y);
 
-        p.x += p.dx;
-        p.y += p.dy;
+          p.x += p.dx;
+          p.y += p.dy;
 
-        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
-      });
+          if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+          if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+        });
 
-      requestAnimationFrame(animate); 
-    }
+        requestAnimationFrame(animate);
+      }
 
-    animate();
-  },
-  hoverEffect(event) {
+      animate();
+    };
+
+    const hoverEffect = (event) => {
       event.target.classList.add("hovered");
-    },
-    removeEffect(event) {
-      event.target.classList.remove("hovered");
-    },
-},
+    };
 
-  };
-  </script>
+    const removeEffect = (event) => {
+      event.target.classList.remove("hovered");
+    };
+
+    onMounted(() => {
+      addDynamicBackground();
+      const element = document.querySelector(".welcome-text");
+      if (element) {
+        element.classList.add("appear");
+      }
+    });
+
+    return {
+      words,
+      hoverEffect,
+      removeEffect,
+    };
+  },
+};
+</script>
+
   
   <style>
   body {
@@ -136,8 +148,14 @@
   font-size: 5.5em;
   font-weight: bold;
   text-align: center;
-  margin-left: 10%;
+  margin-left: 20%;
   margin-right: 20%;
+  opacity: 0;
+  transition: opacity 2s ease-in-out; /* 3秒缓慢过渡 */
+}
+
+.welcome-text.appear {
+  opacity: 1;
 }
   
   #dynamic-background {
