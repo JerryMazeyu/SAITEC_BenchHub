@@ -162,15 +162,15 @@ export default {
         const message = useMessage()
 
         const datasets = [
-            { name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", tag: ["单模态", "文本理解"] },
-            { name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", tag: ["单模态", "文本理解"] },
-            { name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", tag: ["单模态", "文本理解"] },
-            { name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", tag: ["单模态", "文本理解"] },
-            { name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", tag: ["单模态", "文本理解"] },
-            { name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", tag: ["单模态", "文本理解"] },
-            { name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", tag: ["单模态", "文本理解"] },
-            { name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", tag: ["单模态", "文本理解"] },
-            { name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", tag: ["单模态", "文本理解"] },
+            { id:'1',name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", tag: ["单模态", "文本理解"] },
+            { id:'2',name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", tag: ["单模态", "文本理解"] },
+            { id:'3',name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", tag: ["单模态", "文本理解"] },
+            { id:'4',name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", tag: ["单模态", "文本理解"] },
+            { id:'5',name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", tag: ["单模态", "文本理解"] },
+            { id:'6',name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", tag: ["单模态", "文本理解"] },
+            { id:'7',name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", tag: ["单模态", "文本理解"] },
+            { id:'8',name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", tag: ["单模态", "文本理解"] },
+            { id:'9',name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", tag: ["单模态", "文本理解"] },
         ];
 
         const filteredDatasets = ref([]);
@@ -227,9 +227,13 @@ export default {
 
         onMounted(() => {
             intervalId.value = setInterval(updateCardIndex, 8000);
+            
+            // 获取到所有的benchmarks
+            // loadingCards.value=true
             // getAllBenchMarks().then(res=>{
             //     datasets.value=res.data
             //     filteredDatasets.value=this.datasets
+            // loadingCards.value=false
             // })
         });
 
@@ -274,6 +278,7 @@ export default {
 
 .benchmark-title h3 {
     margin: 0;
+    margin-bottom: 40px;
     font-size: 1.2em;
 }
 
