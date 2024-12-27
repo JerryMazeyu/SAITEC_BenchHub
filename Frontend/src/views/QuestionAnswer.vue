@@ -18,19 +18,21 @@
             <div class="content-section bottom-left-section">
                 <div class="show-qa">
                     <n-skeleton v-if="loadingQA" v-for="n in 10" class="skeleton" :sharp="false" size="large" />
-                    <n-list hoverable clickable v-else>
+                    <n-list clickable v-else>
                         <n-list-item v-for="(row, index) in currentQA" :key="index">
                             <!-- 左侧内容 -->
                             <n-thing>
                                 <div class="qa-content">
                                     <div class="qa">
-                                        <n-text type="success">Question:</n-text>{{ row.question }}
+                                        <n-text type="success"><b>Question</b></n-text>
+                                        <n-blockquote>{{ row.question }}</n-blockquote>
                                     </div>
                                     <div class="qa">
-                                        <n-text type="success">Answer:</n-text>{{ row.answer }}
+                                        <n-text type="success"><b>Answer</b></n-text>
+                                        <n-blockquote>{{ row.answer }}</n-blockquote>
                                     </div>
                                     <div class="qa">
-                                        <n-text type="success">Check Variants:</n-text>
+                                        <n-text type="success"><b>Check Variants</b></n-text>
                                         <n-switch class="checkVariants" v-model:value="showVariantsArray[index]">
                                         </n-switch>
                                         <span></span>
@@ -79,7 +81,11 @@
                         </n-list-item>
                     </n-list>
                     <n-pagination class="pagination" v-model:page="page" :page-count="totalPage" size="large"
-                        show-quick-jumper />
+                        show-quick-jumper>
+                        <template #goto>
+                            Go To Page
+                        </template>
+                    </n-pagination>
                 </div>
             </div>
         </n-grid-item>
@@ -162,24 +168,6 @@ export default {
                     { question: '我国古代“十八般武艺”中第十八是“白打”意思是什么？', answer: '古代“十八般武艺”中的“白打”是指徒手搏击的技艺，也可以理解为空手格斗或者自由搏击。这个词语体现了古代武艺中对身体技巧和力量的重视，即使不使用任何武器，也能凭借自身的武艺进行有效的自卫和攻击。在古代，这种技能是非常受尊敬的，因为它体现了武者的身体素质和实战能力。' }
                 ]
             },
-            {
-                answer: 'Answer 2',
-                question: 'Question 2',
-                file_url: 'https://pic.superbed.cc/item/67595444fa9f77b4dc12837b.jpg',
-                variants: [
-                    { question: '我国古代“十八般武艺”中第十八是“白打”意思是什么？', answer: '古代“十八般武艺”中的“白打”是指徒手搏击的技艺，也可以理解为空手格斗或者自由搏击。这个词语体现了古代武艺中对身体技巧和力量的重视，即使不使用任何武器，也能凭借自身的武艺进行有效的自卫和攻击。在古代，这种技能是非常受尊敬的，因为它体现了武者的身体素质和实战能力。' },
-                    { question: '我国古代“十八般武艺”中第十八是“白打”意思是什么？', answer: '古代“十八般武艺”中的“白打”是指徒手搏击的技艺，也可以理解为空手格斗或者自由搏击。这个词语体现了古代武艺中对身体技巧和力量的重视，即使不使用任何武器，也能凭借自身的武艺进行有效的自卫和攻击。在古代，这种技能是非常受尊敬的，因为它体现了武者的身体素质和实战能力。' }
-                ]
-            },
-            {
-                answer: 'Answer 3',
-                question: 'Question 3',
-                file_url: 'https://pic.superbed.cc/item/67595444fa9f77b4dc12837b.jpg',
-                variants: [
-                    { question: '我国古代“十八般武艺”中第十八是“白打”意思是什么？', answer: '古代“十八般武艺”中的“白打”是指徒手搏击的技艺，也可以理解为空手格斗或者自由搏击。这个词语体现了古代武艺中对身体技巧和力量的重视，即使不使用任何武器，也能凭借自身的武艺进行有效的自卫和攻击。在古代，这种技能是非常受尊敬的，因为它体现了武者的身体素质和实战能力。' },
-                    { question: '我国古代“十八般武艺”中第十八是“白打”意思是什么？', answer: '古代“十八般武艺”中的“白打”是指徒手搏击的技艺，也可以理解为空手格斗或者自由搏击。这个词语体现了古代武艺中对身体技巧和力量的重视，即使不使用任何武器，也能凭借自身的武艺进行有效的自卫和攻击。在古代，这种技能是非常受尊敬的，因为它体现了武者的身体素质和实战能力。' }
-                ]
-            },
         ]);
 
         const datasetInfo = ref({ uploader: 'Richard', total_number: 125, answer_mode: 'Open Questions', date_note: '2024-12-27', update_version: [{ version: "1.0", update_time: "2024-9-11" }, { version: "2.0", update_time: "2024-10-11" }] });
@@ -240,9 +228,9 @@ export default {
             // loadingBenchmarkCard.value=true
             // getMeta(thisBenchMark.value.id).then(res=>{
             //     datasetInfo.value=res.data
-                    // setTimeout(() => {
-                    // loadingBenchmarkCard.value = false;
-                    // }, 500);
+            // setTimeout(() => {
+            // loadingBenchmarkCard.value = false;
+            // }, 500);
 
             // })
             // // 获取数据集qa
@@ -250,9 +238,9 @@ export default {
             // getQAs(hisBenchMark.value.id).then(res=>{
             //     totalQA.value=res.data
             //     loadingQA.value=false
-                    // setTimeout(() => {
-                    // loadingQA.value = false;
-                    // }, 500);
+            // setTimeout(() => {
+            // loadingQA.value = false;
+            // }, 500);
             // })
         });
 
@@ -345,6 +333,8 @@ export default {
     flex: 1;
     /* 左侧内容占满剩余空间 */
     margin-right: 16px;
+    padding: 15px;
+    /* background-color: white; */
 
 }
 
@@ -372,13 +362,14 @@ export default {
 
 .qa-buttons {
     margin-top: 20px;
+    margin-left: 10px;
 }
 
 .qa-media {
     flex-shrink: 0;
     /* 确保媒体部分不会被挤压 */
-    width: 200px;
-    height: 200px;
+    width: 250px;
+    height: 250px;
     /* 根据需要调整宽度 */
     /* background-color: white; */
     display: flex;
@@ -386,6 +377,8 @@ export default {
     /* 水平居中 */
     align-items: center;
     /* 垂直居中 */
+    margin-right: 20px;
+    
 }
 
 .qa-media img,
@@ -393,7 +386,14 @@ export default {
     max-width: 100%;
     max-height: 100%;
     /* 确保媒体按比例缩放 */
-    border-radius: 8px;
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* 添加动画过渡效果 */
+}
+
+.qa-media img:hover,
+.qa-media video:hover {
+    transform: scale(1.1); /* 悬浮时放大 */
+    box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.8);
 }
 
 .pagination {
