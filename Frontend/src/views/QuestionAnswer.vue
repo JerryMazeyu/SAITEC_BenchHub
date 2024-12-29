@@ -18,7 +18,7 @@
             <div class="content-section bottom-left-section">
                 <div class="show-qa">
                     <n-skeleton v-if="loadingQA" v-for="n in 10" class="skeleton" :sharp="false" size="large" />
-                    <n-list clickable v-else>
+                    <n-list v-else>
                         <n-list-item v-for="(row, index) in currentQA" :key="index">
                             <!-- 左侧内容 -->
                             <n-thing>
@@ -377,7 +377,7 @@ export default {
     /* 水平居中 */
     align-items: center;
     /* 垂直居中 */
-    margin-right: 20px;
+    margin-right: 25px;
     
 }
 
