@@ -7,7 +7,7 @@
                     <n-h2>{{ thisBenchMark.name }}</n-h2>
                     <n-h4>{{ thisBenchMark.description }}</n-h4>
                     <n-flex justify="center">
-                        <n-tag size="large" type="success" v-for="row in thisBenchMark.tag" :key="row">{{ row }}</n-tag>
+                        <n-tag size="large" type="success">{{ thisBenchMark.class }}</n-tag>
                     </n-flex>
                 </div>
             </div>
@@ -17,7 +17,7 @@
         <n-grid-item :span="9">
             <div class="content-section bottom-left-section">
                 <div class="show-qa">
-                    <n-skeleton v-if="loadingQA" v-for="n in 10" class="skeleton" :sharp="false" size="large" />
+                    <n-skeleton v-if="loadingQA" v-for="n in 10" class="skeleton" :height="150" :sharp="false" />
                     <n-list v-else>
                         <n-list-item v-for="(row, index) in currentQA" :key="index">
                             <!-- 左侧内容 -->
@@ -46,7 +46,7 @@
                                     <div class="qa-buttons">
                                         <n-flex>
                                             <n-button strong secondary type="primary" @click="download(row.file_url)">
-                                                Download File
+                                                Download Meida File
                                             </n-button>
                                             <!-- 还可以继续添加其他按钮 -->
                                         </n-flex>
@@ -319,7 +319,6 @@ export default {
 
 .skeleton {
     margin: 20px;
-    height: 300px;
     width: 95%;
 }
 

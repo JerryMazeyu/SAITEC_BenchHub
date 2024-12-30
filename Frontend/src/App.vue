@@ -39,7 +39,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   /* 自动出现滚动条 */
 }
 </style>
