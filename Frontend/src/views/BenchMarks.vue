@@ -3,7 +3,7 @@
         <main>
             <div class="benchmark-title">
                 <h1>
-                    Benchmark Hub
+                    Benchmarks Hub
                 </h1>
                 <h3>
                     Here, we offer a wide range of comprehensive evaluation benchmarks.
@@ -15,7 +15,7 @@
                     <div class="process-bar">
                         <n-space vertical>
                             <n-steps vertical :current="currentCardIndex">
-                                <n-step title="Number of evaluation data" description="" />
+                                <n-step title="Number of Evaluation Data" description="" />
                                 <n-step title="Evaluation Dimensions" description="" />
                                 <n-step title="Evaluation Features" description="" />
                                 <n-step title="Evaluation advantages" description="" />
@@ -36,7 +36,7 @@
                                 <n-li>Nearly <n-text type="success">
                                         <n-number-animation :from="0" :to="40000" />
                                     </n-text> entries of comprehensive international standard dimension test
-                                    datasets</n-li>
+                                    datasets.</n-li>
                             </n-ul>
                         </n-card>
                         <n-card class="intro-card" v-if="currentCardIndex === 2" title="Evaluation Dimensions"
@@ -92,11 +92,13 @@
                             </n-ul>
                         </n-card>
                     </div>
-                    <div class="statistics">
-                        <n-carousel autoplay show-arrow>
-                            <img class="carousel-img" src="../assets/单模态能力.png">
-                            <img class="carousel-img" src="../assets/多模态能力.png">
-                        </n-carousel>
+                    <div class="statistics" @click="updateChartIndex">
+                        <div class="barchart" v-if="currentChartIndex === 1">
+                            <BarchartA />
+                        </div>
+                        <div class="barchart" v-if="currentChartIndex === 2">
+                            <BarchartB />
+                        </div>
                     </div>
                 </n-flex>
             </div>
@@ -126,14 +128,17 @@
             </div>
             <div class="filtered-cards">
                 <n-flex justify="center">
-                    <n-skeleton v-if="loadingCards" v-for="index in filteredDatasets.length" :width="400" :height="100"  :sharp="false" size="medium" />
+                    <n-skeleton v-if="loadingCards" v-for="n in 12" :width="400" :height="100"
+                        :sharp="false"/>
                     <n-card class="filtered-card" v-else v-for="(row, index) in filteredDatasets" :key="index" hoverable
                         @click="toQA(row)" title="">
-                        <div><n-h3><n-text type="success">{{ row.name }}</n-text></n-h3></div>
+                        <n-flex>
+                            <div><n-h3><n-text type="success">{{ row.name }}</n-text></n-h3></div>
+                            <div> <n-tag class="filtered-card-tag" round :bordered="false">
+                                    {{ row.class }}
+                                </n-tag></div>
+                        </n-flex>
                         <div>{{ row.description }}</div>
-                        <div> <n-tag class="filtered-card-tag" round v-for="(tag, index) in row.tag" :bordered="false">
-                                {{ tag }}
-                            </n-tag></div>
                     </n-card>
                 </n-flex>
             </div>
@@ -144,34 +149,43 @@
 <script>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { Search48Regular } from '@vicons/fluent';
-import { useMessage } from 'naive-ui'
+// import { useMessage } from 'naive-ui'
 import { useRouter } from 'vue-router';
+import BarchartA from '@/components/BarchartA.vue'
+import BarchartB from '@/components/BarchartB.vue'
+// import { MdArrowRoundBack, MdArrowRoundForward } from '@vicons/ionicons4'
 // import {getAllBenchMarks} from '@/api/benchMarks'
 
 export default {
     name: 'BenchMarks',
     components: {
-        Search48Regular
+        Search48Regular,
+        BarchartA,
+        BarchartB
+        // MdArrowRoundBack,
+        // MdArrowRoundForward
     },
     setup() {
         const router = useRouter();
         const currentCardIndex = ref(1);
-        const intervalId = ref(null);
+        const currentChartIndex = ref(1);
+        const intervalCard = ref(null);
+        const intervalChart = ref(null);
         const loadingCards = ref(false);
         const searchQuery = ref('');
-        const message = useMessage()
+        // const message = useMessage()
 
-        const datasets = [
-            { name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", tag: ["单模态", "文本理解"] },
-            { name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", tag: ["单模态", "文本理解"] },
-            { name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", tag: ["单模态", "文本理解"] },
-            { name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", tag: ["单模态", "文本理解"] },
-            { name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", tag: ["单模态", "文本理解"] },
-            { name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", tag: ["单模态", "文本理解"] },
-            { name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", tag: ["单模态", "文本理解"] },
-            { name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", tag: ["单模态", "文本理解"] },
-            { name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", tag: ["单模态", "文本理解"] },
-        ];
+        const datasets =ref([
+            { id: '1', name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", class: "单模态" },
+            { id: '2', name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", class: "单模态" },
+            { id: '3', name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", class: "单模态" },
+            { id: '4', name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", class: "单模态" },
+            { id: '5', name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", class: "单模态" },
+            { id: '6', name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", class: "单模态" },
+            { id: '7', name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", class: "单模态" },
+            { id: '8', name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", class: "单模态" },
+            { id: '9', name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", class: "单模态" },
+        ]);
 
         const filteredDatasets = ref([]);
 
@@ -179,28 +193,32 @@ export default {
             currentCardIndex.value = currentCardIndex.value < 4 ? currentCardIndex.value + 1 : 1;
         };
 
+        const updateChartIndex = () => {
+            currentChartIndex.value = currentChartIndex.value < 2 ? currentChartIndex.value + 1 : 1;
+        };
+
         const categoryFilter = (option) => {
             if (option === 0) {
                 loadingCards.value = true
-                filteredDatasets.value = datasets;
+                filteredDatasets.value = datasets.value;
                 setTimeout(() => {
                     loadingCards.value = false;
                 }, 500);
             } else if (option === 1) {
                 loadingCards.value = true
-                filteredDatasets.value = datasets.filter(item => item.tag.includes("单模态"));
+                filteredDatasets.value = datasets.value.filter(item => item.class.includes("单模态"));
                 setTimeout(() => {
                     loadingCards.value = false;
                 }, 500);
             } else if (option === 2) {
                 loadingCards.value = true
-                filteredDatasets.value = datasets.filter(item => item.tag.includes("多模态"));
+                filteredDatasets.value = datasets.value.filter(item => item.class.includes("多模态"));
                 setTimeout(() => {
                     loadingCards.value = false;
                 }, 500);
             } else if (option === 3) {
                 loadingCards.value = true
-                filteredDatasets.value = datasets.filter(item => item.tag.includes("安全性"));
+                filteredDatasets.value = datasets.value.filter(item => item.class.includes("安全性"));
                 setTimeout(() => {
                     loadingCards.value = false;
                 }, 500);
@@ -216,7 +234,11 @@ export default {
                 }, 500);
             }
             else {
-                message.warning("Search keyword cannot be empty")
+                loadingCards.value = true
+                filteredDatasets.value=datasets.value
+                setTimeout(() => {
+                    loadingCards.value = false;
+                }, 500);
             }
         };
 
@@ -226,15 +248,21 @@ export default {
         };
 
         onMounted(() => {
-            intervalId.value = setInterval(updateCardIndex, 8000);
+            intervalCard.value = setInterval(updateCardIndex, 8000);
+            intervalChart.value = setInterval(updateChartIndex, 16000);
+
+            // 获取到所有的benchmarks
+            // loadingCards.value=true
             // getAllBenchMarks().then(res=>{
             //     datasets.value=res.data
-            //     filteredDatasets.value=this.datasets
+            //     filteredDatasets.value=datasets.value
+            // loadingCards.value=false
             // })
         });
 
         onBeforeUnmount(() => {
-            clearInterval(intervalId.value);
+            clearInterval(intervalCard.value);
+            clearInterval(intervalChart.value);
         });
 
         return {
@@ -244,7 +272,9 @@ export default {
             filteredDatasets,
             categoryFilter,
             searchFilter,
-            toQA
+            toQA,
+            currentChartIndex,
+            updateChartIndex
         };
     }
 };
@@ -274,6 +304,7 @@ export default {
 
 .benchmark-title h3 {
     margin: 0;
+    margin-bottom: 40px;
     font-size: 1.2em;
 }
 
@@ -317,6 +348,7 @@ export default {
     width: 600px;
     height: 280px;
     transition: box-shadow 0.5s ease-in-out;
+    cursor: pointer;
 }
 
 .statistics:hover {
@@ -324,14 +356,17 @@ export default {
     /* 鼠标悬浮时的发光效果 */
 }
 
-.carousel-img {
+.barchart {
     width: 100%;
-    /* 图片宽度自适应轮播框 */
     height: 100%;
-    /* 图片高度自适应轮播框 */
-    object-fit: fill;
-    /* 填充轮播框，可能裁剪部分图片 */
+    margin-top: 20px;
 }
+
+/* .carousel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+} */
 
 .filter-control {
     margin-top: 100px
@@ -374,7 +409,7 @@ export default {
 }
 
 .filtered-card-tag {
-    margin: 5px;
-    margin-top: 10px;
+    margin: 0px;
+    margin-top: 0px;
 }
 </style>
