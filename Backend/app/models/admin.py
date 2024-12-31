@@ -14,6 +14,7 @@ class AdminUser(UserMixin, db.Model):
     password_hash = db.Column(db.String(200), nullable=False)  # 哈希密码
     created_at = db.Column(db.DateTime, server_default=db.func.now())  # 创建时间
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())  # 更新时间
+    last_login = db.Column(db.DateTime, nullable=True)  # 新增字段
 
     def set_password(self, password):
         """

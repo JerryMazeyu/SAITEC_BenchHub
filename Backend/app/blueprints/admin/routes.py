@@ -1,10 +1,9 @@
-from flask import request, jsonify, redirect, url_for
+from flask import request, jsonify, current_app
 from flask_login import login_user, logout_user, login_required, current_user
 from app.models import AdminUser  # 用户模型
 from . import admin_bp  # 引入 Blueprint
 from .utils import log_admin_action  # 日志工具
 
-# 登录视图
 @admin_bp.route('/login', methods=['POST'])
 def login():
     """
@@ -12,25 +11,41 @@ def login():
     - 请求方式: POST
     - 接收 JSON 格式的用户名和密码。
     """
-    data = request.json
-    username = data.get('username')
-    password = data.get('password')
+    try:
+        # 确保请求内容是 JSON
+        if not request.is_json:
+            return jsonify({"error": "Request must be JSON"}), 415
 
-    if not username or not password:
-        return jsonify({"error": "Username and password are required"}), 400
+        # 获取请求数据
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
 
-    # 验证用户
-    user = AdminUser.query.filter_by(username=username).first()
-    if not user or not user.verify_password(password):  # 假设 verify_password 方法验证哈希密码
-        return jsonify({"error": "Invalid username or password"}), 401
+        # 检查参数是否为空
+        if not username or not password:
+            return jsonify({"error": "Username and password are required"}), 400
 
-    # 登录用户并记录操作
-    login_user(user)
-    log_admin_action(user.id, "login")
+        # 验证用户
+        user = AdminUser.query.filter_by(username=username).first()
+        if not user or not user.verify_password(password):  # 假设 verify_password 方法验证哈希密码
+            return jsonify({"error": "Invalid username or password"}), 401
 
-    # 重定向到 next 参数指向的页面（如有），否则返回成功信息
-    next_url = request.args.get('next')
-    return redirect(next_url or url_for('admin.dashboard'))
+        # 登录用户
+        login_user(user)  # 将用户的登录状态存储到会话（session）中，并允许您在整个应用中通过 current_user 访问已登录的用户
+        log_admin_action(user.id, "login")  # 记录上次登陆时间
+
+        # 返回登录成功信息和用户数据
+        return jsonify({
+            "message": "Login successful",
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "last_login": user.last_login
+            }
+        }), 200
+    except Exception as e:
+        current_app.logger.error(f"Login error: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 # 登出视图
 @admin_bp.route('/logout', methods=['POST'])
@@ -40,35 +55,16 @@ def logout():
     用户登出视图。
     - 请求方式: POST
     """
-    user_id = current_user.id
-    username = current_user.username
+    try:
+        user_id = current_user.id
+        username = current_user.username
 
-    # 登出用户并记录操作
-    logout_user()
-    log_admin_action(user_id, "logout")
+        # 登出用户并记录操作
+        logout_user()
+        log_admin_action(user_id, "logout")
 
-    return jsonify({"message": f"Goodbye, {username}!"}), 200
+        return jsonify({"message": f"Goodbye, {username}!"}), 200
+    except Exception as e:
+        current_app.logger.error(f"Login error: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
-# 查看仪表盘（受保护路由）
-@admin_bp.route('/dashboard', methods=['GET'])
-@login_required
-def dashboard():
-    """
-    查看仪表盘视图。
-    - 请求方式: GET
-    - 需要用户登录。
-    """
-    return jsonify({"message": f"Welcome to the dashboard, {current_user.username}!"}), 200
-
-# 查看使用记录
-@admin_bp.route('/logs', methods=['GET'])
-@login_required
-def get_logs():
-    """
-    查看管理员操作日志。
-    - 请求方式: GET
-    - 返回操作日志的 JSON 数据。
-    """
-    from flask import current_app as app
-    logs = app.config.get('ADMIN_LOGS', [])
-    return jsonify({"logs": logs}), 200

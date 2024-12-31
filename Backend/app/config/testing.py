@@ -7,3 +7,4 @@ class Config:
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'  # 测试环境数据库
+    DATA_ROOT = ''
