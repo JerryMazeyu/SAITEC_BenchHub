@@ -3,7 +3,7 @@
     <main class="homepage">
       <div class="welcome-section">
         <div class="welcome-text">
-          <h1>Shanghai Generative AI Testing and Evaluation Center Benchhub</h1>
+          <h1 class="pageTitle">Shanghai Generative AI Testing and Evaluation Center Benchhub</h1>
           <div class="typing-area"><span class="currentText" v-html="currentText"></span><span class="cursor"></span>
           </div>
           <div class="button-group">
@@ -39,9 +39,10 @@ export default {
   },
   setup() {
     const messages = [
-      "Here, we provide evaluation benchmarks covering a wide range of dimensions, along with the display of all use cases included.",
-      "We have also carefully curated articles spanning various evaluation dimensions, which can be helpful for enhancing the model's performance.",
-      "Let's click the button below to start..."
+      "Welcome to SAITEC！😊",
+      "Explore evaluation benchmarks across diverse dimensions and discover all included use cases.📊",
+      "Explore curated articles to enhance model performance.🎯",
+      "Let's click the button below to start...🚀"
     ];
 
     const currentText = ref("");
@@ -198,11 +199,11 @@ body {
 }
 
 .welcome-text h1 {
-  font-size: 5ch;
+  font-size: 7ch;
 }
 
 .currentText {
-  font-size: x-large;
+  font-size: 3ch;
   font-family:'Courier New', Courier, monospace
 }
 
@@ -237,6 +238,7 @@ body {
 }
 
 .button-group {
+  margin-top: 10px;
   position: fixed;
 }
 </style>
