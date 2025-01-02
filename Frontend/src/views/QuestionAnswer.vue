@@ -185,6 +185,11 @@ export default {
         const message = useMessage()
 
         const download = (fileUrl) => {
+            if(!fileUrl)
+            {
+                message.error("Invalid file URL");
+                return;
+            }
             message.success("Downloading")
             // 创建一个隐藏的 <a> 标签
             const link = document.createElement('a');
@@ -308,11 +313,11 @@ export default {
 
 .bottom-left-section {
     background: rgba(0, 0, 0, 0.1);
-    height: auto;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.3);
+    height: auto;
     width: 95%;
     margin-left: 50px;
 }

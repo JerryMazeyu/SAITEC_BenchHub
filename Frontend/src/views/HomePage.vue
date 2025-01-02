@@ -1,14 +1,25 @@
 <template>
   <div id="app">
-    <!-- <Navbar /> -->
     <main class="homepage">
       <div class="welcome-section">
-        <h2 class="welcome-text">
-          <span v-for="(word, index) in words" :key="index" class="word" @mouseover="hoverEffect"
-            @mouseout="removeEffect">
-            {{ word }}
-          </span>
-        </h2>
+        <div class="welcome-text">
+          <h1 class="pageTitle">Shanghai Generative AI Testing and Evaluation Center Benchhub</h1>
+          <div class="typing-area"><span class="currentText" v-html="currentText"></span><span class="cursor"></span>
+          </div>
+          <div class="button-group">
+            <n-flex>
+              <router-link to="/benchmarks"> <n-button ghost type="primary" size="large"><template #icon>
+                    <ClipboardDataBar24Regular />
+                  </template>Benchmarks</n-button></router-link>
+              <router-link to="/papers"><n-button size="large" type="primary" ghost>
+                  <template #icon>
+                    <NewspaperOutline />
+                  </template>
+                  Papers
+                </n-button></router-link>
+            </n-flex>
+          </div>
+        </div>
         <div id="dynamic-background"></div>
       </div>
     </main>
@@ -17,20 +28,59 @@
 
 <script>
 import { ref, onMounted } from "vue";
+import { ClipboardDataBar24Regular } from '@vicons/fluent';
+import { NewspaperOutline } from "@vicons/ionicons5"
 
 export default {
   name: "Homepage",
+  components: {
+    ClipboardDataBar24Regular,
+    NewspaperOutline
+  },
   setup() {
-    const words = ref([
-      "Shanghai ",
-      "Generative ",
-      "AI ",
-      "Testing ",
-      "and ",
-      "Evaluation ",
-      "Center ",
-      "Benchhub",
-    ]);
+    const messages = [
+      "Welcome to SAITEC！😊",
+      "Explore evaluation benchmarks across diverse dimensions and discover all included use cases.📊",
+      "Explore curated articles to enhance model performance.🎯",
+      "Let's click the button below to start...🚀"
+    ];
+
+    const currentText = ref("");
+    const messageIndex = ref(0);
+    const charIndex = ref(0);
+    const typingSpeed = 50; // Typing speed in ms
+    const deletingSpeed = 10; // Deleting speed in ms
+    const delayBeforeDelete = 2000; // Delay between messages in ms
+    const delayBetweenMessages = 1000;
+
+    const typeText = () => {
+      if (charIndex.value < messages[messageIndex.value].length) {
+        currentText.value += messages[messageIndex.value][charIndex.value];
+        charIndex.value++;
+        setTimeout(typeText, typingSpeed);
+      } else {
+        setTimeout(deleteText, delayBeforeDelete);
+      }
+    };
+
+    const nextMessage = () => {
+      charIndex.value = 0;
+      messageIndex.value = (messageIndex.value + 1) % messages.length;
+      currentText.value = "";
+      typeText();
+    };
+
+    const deleteText = () => {
+      if (charIndex.value > 0) {
+        // Deleting characters one by one
+        charIndex.value--;
+        currentText.value = currentText.value.slice(0, charIndex.value);
+        setTimeout(deleteText, deletingSpeed);
+      } else {
+        // Move to the next message after deleting
+        setTimeout(nextMessage, delayBetweenMessages);
+      }
+    };
 
     const addDynamicBackground = () => {
       const canvas = document.createElement("canvas");
@@ -81,33 +131,28 @@ export default {
       animate();
     };
 
-    const hoverEffect = (event) => {
-      event.target.classList.add("hovered");
-    };
-
-    const removeEffect = (event) => {
-      event.target.classList.remove("hovered");
-    };
-
     onMounted(() => {
       addDynamicBackground();
-      const element = document.querySelector(".welcome-text");
-      if (element) {
-        element.classList.add("appear");
-      }
+      typeText();
     });
 
     return {
-      words,
-      hoverEffect,
-      removeEffect,
+      currentText,
     };
   },
 };
 </script>
 
-
 <style>
+html {
+  overflow: hidden;
+  /* 确保 html 元素也隐藏滚动条 */
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   overflow: hidden;
   width: 100%;
@@ -129,17 +174,14 @@ body {
   margin: 0;
   padding: 0;
   text-align: center;
-  padding-top: 50px;
+  /* padding-top: 50px; */
 }
 
 .welcome-section {
   display: flex;
   justify-content: center;
-  align-items: center;
   width: 100%;
-  /* 确保宽度为 100% */
   height: 100%;
-  /* 确保高度为 100% */
   position: relative;
   margin: 0;
   padding: 0;
@@ -148,18 +190,25 @@ body {
 .welcome-text {
   position: relative;
   z-index: 1;
-  font-size: 5.5em;
   font-weight: bold;
-  text-align: center;
-  margin-left: 20%;
-  margin-right: 20%;
-  opacity: 0;
-  transition: opacity 2s ease-in-out;
-  /* 3秒缓慢过渡 */
+  text-align: left;
+  /* background-color: blue; */
+  width: 90%;
+  height: 15%;
+  margin-top: 20%;
 }
 
-.welcome-text.appear {
-  opacity: 1;
+.welcome-text h1 {
+  font-size: 7ch;
+}
+
+.currentText {
+  font-size: 3ch;
+  font-family:'Courier New', Courier, monospace
+}
+
+.typing-area {
+  height: 100px;
 }
 
 #dynamic-background {
@@ -167,27 +216,29 @@ body {
   top: 0;
   left: 0;
   margin: 0;
-  /* width: 100%; */
+  width: 100%;
   height: 100%;
   z-index: 0;
 }
 
-.word {
-  margin: 0 5px;
+.cursor {
   display: inline-block;
-  transition: text-shadow 0.5s ease-in-out, color 0.5s ease-in-out;
-  /* 加入缓慢的过渡效果 */
-  cursor: pointer;
+  width: 10px;
+  height: 1em;
+  background-color: #fff;
+  animation: blink 0.6s steps(1) infinite;
+  margin-left: 5px;
+  /* 与文本保持一定距离 */
 }
 
-.word.hovered {
-  color: #ffffff;
-  /* 发光的颜色：白色 */
-  text-shadow:
-    0 0 2px #ffffff,
-    0 0 4px #ffffff,
-    0 0 8px #ffffff;
-  /* 减弱发光效果 */
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
 
+.button-group {
+  margin-top: 10px;
+  position: fixed;
 }
 </style>

@@ -17,7 +17,7 @@
                 <n-flex class="filter-control" justify="center">
                     <n-select class="selector" v-model:value="valueClass" size="large" :options="optionsClass"
                         placeholder="Please Select The Data Category" />
-                    <n-select class="selector" size="large" disabled v-if="valueClass === 0"
+                    <n-select class="selector" size="large" disabled v-if="valueClass === 0||valueClass===null"
                         placeholder="Please Select The Benchmark" />
                     <n-select class="selector" v-else v-model:value="valueBenchmark" size="large"
                         :options="optionsBenchmark" placeholder="Please Select The Benchmark" />
@@ -41,6 +41,9 @@
                         </template>
                         Search
                     </n-button>
+                    <n-button ghost type="info" size="large" @click="resetFilter()"><template #icon>
+                            <Reset />
+                        </template>Reset</n-button>
                 </n-flex>
                 <div class="showPapersNumber" v-if="showNumber">
                     <n-h3>In the field of <n-text type="success">{{ valueBenchmark }}</n-text>, we have collected
@@ -60,21 +63,27 @@
                 <div class="papers-list">
                     <n-skeleton class="skeleton" v-if="loadingPapers" v-for="n in 10" :sharp="false" :height="150" />
                     <n-list v-else hoverable clickable>
-                        <n-list-item v-for="(row, index) in filteredPapers">
+                        <n-list-item v-for="(row, index) in currentPapers">
                             <n-h3><n-text type="success"><b>{{ row.name }}</b></n-text></n-h3>
                             <n-tag type="info" :bordered="false">{{ row.class }}</n-tag>
                             <h4><n-text type="success"><b>Author:</b></n-text> {{ row.author }}</h4>
                             <h4><n-text type="success"><b>Journal:</b></n-text> {{ row.journal }}</h4>
                             <n-blockquote>{{ row.abstract }}</n-blockquote>
                             <template #suffix>
-                                <n-button round size="large" dashed> <template #icon>
+                                <n-button round size="large" dashed @click="readPaper(row.file_url)"> <template #icon>
                                         <n-icon>
-                                            <ReaderOutline />
+                                            <NewspaperOutline />
                                         </n-icon>
                                     </template>Read This Paper</n-button>
                             </template>
                         </n-list-item>
                     </n-list>
+                    <n-pagination class="pagination" v-model:page="page" :page-count="totalPage" size="large"
+                        show-quick-jumper>
+                        <template #goto>
+                            Go To Page
+                        </template>
+                    </n-pagination>
                 </div>
             </div>
         </n-grid-item>
@@ -86,14 +95,17 @@ import { ref, onMounted, computed } from 'vue';
 import { useMessage } from 'naive-ui'
 import { Search48Regular } from '@vicons/fluent';
 import { Filter } from "@vicons/carbon"
-import { ReaderOutline } from "@vicons/ionicons5"
+import { NewspaperOutline } from "@vicons/ionicons5"
+import { Reset } from "@vicons/carbon"
+// import {getAllPapers} from "@/api/papers"
 
 export default {
     name: "Papers",
     components: {
         Search48Regular,
         Filter,
-        ReaderOutline
+        NewspaperOutline,
+        Reset
     },
     setup() {
         const loadingPapers = ref(false)
@@ -105,21 +117,24 @@ export default {
                     author: "fyf2007",
                     journal: "CSDN博客",
                     abstract: "论文首先分析了语言模型中幻觉问题的来源，即模型可能生成与现实不符或误导性的文本内容。这种现象源于语言模型在无监督学习中对大规模训练语料的统计模式进行建模，却缺乏事实校验和语义理解能力。随后，作者提出了一系列减少幻觉问题的技术与非技术手段",
-                    class: "文本分类"
+                    class: "文本分类",
+                    file_url:"https://arxiv.org/pdf/2305.16291",
                 },
                 {
                     name: "利用LLMs解决信息抽取任务｜综述",
                     author: "养生的控制人",
                     journal: "知乎专栏",
                     abstract: "论文首先分析了语言模型中幻觉问题的来源，即模型可能生成与现实不符或误导性的文本内容。这种现象源于语言模型在无监督学习中对大规模训练语料的统计模式进行建模，却缺乏事实校验和语义理解能力。随后，作者提出了一系列减少幻觉问题的技术与非技术手段",
-                    class: "信息抽取"
+                    class: "信息抽取",
+                    file_url:"https://arxiv.org/pdf/2305.16291",
                 },
                 {
                     name: "大模型推理最新论文及源码合集，涵盖多模态推理、逻辑推理",
                     author: "weixin_42645636",
                     journal: "CSDN博客",
                     abstract: '论文首先分析了语言模型中幻觉问题的来源，即模型可能生成与现实不符或误导性的文本内容。这种现象源于语言模型在无监督学习中对大规模训练语料的统计模式进行建模，却缺乏事实校验和语义理解能力。随后，作者提出了一系列减少幻觉问题的技术与非技术手段',
-                    class: "数学推理"
+                    class: "数学推理",
+                    file_url:"https://arxiv.org/pdf/2305.16291",
                 }
             ]
         );
@@ -180,6 +195,16 @@ export default {
         const valueClass = ref(null);
         const showNumber = ref(false)
         const searchQuery = ref('')
+        const page =ref(1)
+        const totalPage = computed(() => {
+            return Math.ceil(filteredPapers.value.length / 10);
+        });
+
+        const currentPapers = computed(() => {
+            const start = (page.value - 1) * 10;
+            const end = page.value * 10;
+            return filteredPapers.value.slice(start, end);
+        });
 
         const optionFilter = () => {
             if (valueClass.value === null) {
@@ -208,22 +233,50 @@ export default {
             }
         }
         const searchFilter = () => {
-            if (searchQuery.value === '') {
-                loadingPapers.value = true
-                filteredPapers.value = papers.value
-                showNumber.value = false
-                setTimeout(() => {
-                    loadingPapers.value = false;
-                }, 500);
-            }
-            else {
-                loadingPapers.value = true
-                filteredPapers.value = filteredPapers.value.filter(item => item.name.includes(searchQuery.value))
-                setTimeout(() => {
-                    loadingPapers.value = false;
-                }, 500);
-            }
+            loadingPapers.value = true
+            filteredPapers.value = filteredPapers.value.filter(item => item.name.includes(searchQuery.value))
+            setTimeout(() => {
+                loadingPapers.value = false;
+            }, 500);
         }
+        const resetFilter = () => {
+            loadingPapers.value = true
+            searchQuery.value = '',
+                valueClass.value = null,
+                valueBenchmark.value = null,
+                filteredPapers.value = papers.value
+            setTimeout(() => {
+                loadingPapers.value = false;
+            }, 500)
+        }
+        const readPaper=(fileUrl)=>{
+            if(!fileUrl)
+            {
+                message.error("Invalid file URL");
+                return;
+            }
+            // 创建一个隐藏的 <a> 标签
+            const link = document.createElement('a');
+            link.href = fileUrl; // 设置文件地址
+            link.download = ''; // 设置文件名，可以设置具体名称，比如 `filename.pdf`
+            link.target = '_blank'; // 兼容某些浏览器的跨域文件下载
+            document.body.appendChild(link);
+            link.click(); // 触发点击事件
+            document.body.removeChild(link); // 下载完成后移除元素
+        }
+        onMounted(() => {
+            loadingPapers.value = true
+            // 获取所有paper
+            // getAllPapers.then(res=>{
+            //     papers.value=res.data;
+            //     filteredPapers=papers.value
+            // })
+            filteredPapers.value=papers.value
+
+            setTimeout(() => {
+                loadingPapers.value = false;
+            }, 500)
+        });
         return {
             optionsClass,
             valueClass,
@@ -235,8 +288,13 @@ export default {
             searchQuery,
             filteredPapers,
             papers,
+            page,
+            totalPage,
+            currentPapers,
             optionFilter,
-            searchFilter
+            searchFilter,
+            resetFilter,
+            readPaper
         }
     }
 }
@@ -285,11 +343,11 @@ export default {
 }
 
 .selector {
-    width: 25%;
+    width: 23%;
 }
 
 .search-input {
-    width: 25%;
+    width: 23%;
 }
 
 .showPapersNumber {
@@ -314,6 +372,11 @@ export default {
 
 .papers-list {
     margin: 20px;
+    margin-bottom: 100px;
+}
+
+.pagination{
+    margin-top: 20px;
 }
 
 .skeleton {
