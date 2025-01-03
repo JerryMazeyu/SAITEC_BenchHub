@@ -14,7 +14,7 @@ def login():
     try:
         # 确保请求内容是 JSON
         if not request.is_json:
-            return jsonify({"error": "Request must be JSON"}), 415
+            return jsonify({"success": False, "message": "Request must be JSON"}), 415
 
         # 获取请求数据
         data = request.get_json()
@@ -23,12 +23,12 @@ def login():
 
         # 检查参数是否为空
         if not username or not password:
-            return jsonify({"error": "Username and password are required"}), 400
+            return jsonify({"success": False, "message": "Username and password are required"}), 400
 
         # 验证用户
         user = AdminUser.query.filter_by(username=username).first()
         if not user or not user.verify_password(password):  # 假设 verify_password 方法验证哈希密码
-            return jsonify({"error": "Invalid username or password"}), 401
+            return jsonify({"success": False, "message": "Invalid username or password"}), 401
 
         # 登录用户
         login_user(user)  # 将用户的登录状态存储到会话（session）中，并允许您在整个应用中通过 current_user 访问已登录的用户
@@ -36,6 +36,7 @@ def login():
 
         # 返回登录成功信息和用户数据
         return jsonify({
+            "success": True,
             "message": "Login successful",
             "user": {
                 "id": user.id,
@@ -44,8 +45,8 @@ def login():
             }
         }), 200
     except Exception as e:
-        current_app.logger.error(f"Login error: {e}")
-        return jsonify({"error": "Internal server error"}), 500
+        current_app.logger.error(f"[admin] Login error: {e}")
+        return jsonify({"success": False, "message": "Internal server error"}), 500
 
 # 登出视图
 @admin_bp.route('/logout', methods=['POST'])
@@ -63,8 +64,8 @@ def logout():
         logout_user()
         log_admin_action(user_id, "logout")
 
-        return jsonify({"message": f"Goodbye, {username}!"}), 200
+        return jsonify({"success": True, "message": "Goodbye, {username}!"}), 200
     except Exception as e:
-        current_app.logger.error(f"Login error: {e}")
-        return jsonify({"error": "Internal server error"}), 500
+        current_app.logger.error(f"[admin] Logout error: {e}")
+        return jsonify({"success": False, "message": f"Internal server error: {e}"}), 500
 

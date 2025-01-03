@@ -13,4 +13,7 @@ def create_app(config_class='app.config.DevelopmentConfig'):
     from app.blueprints.admin import admin_bp
     app.register_blueprint(admin_bp)
 
+    from app.blueprints.benchmarks import benchmarks_bp
+    app.register_blueprint(benchmarks_bp)
+
     return app
