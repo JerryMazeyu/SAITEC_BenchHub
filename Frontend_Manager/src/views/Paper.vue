@@ -50,8 +50,30 @@
             </div>
         </el-card>
     </div>
-    <el-dialog v-model="showAddPaper" title="Add Paper" width="500" :before-close="handleClose">
-        <span>This is a message</span>
+    <el-dialog v-model="showAddPaper" title="Add Paper" width="600" :before-close="handleCloseAddPaper">
+        <el-form :model="addPaperData" :ref="addPaperDataRef" :rules="rules" label-width="120px">
+            <el-form-item label-position="left" prop="name" label="Paper Name">
+                <el-input v-model="addPaperData.name" placeholder="Enter paper name"></el-input>
+            </el-form-item>
+            <el-form-item label-position="left" prop="author" label="Paper Author">
+                <el-input v-model="addPaperData.author" placeholder="Enter paper author"></el-input>
+            </el-form-item>
+            <el-form-item label-position="left" prop="journal" label="Paper Journal">
+                <el-input v-model="addPaperData.journal" placeholder="Enter paper journal"></el-input>
+            </el-form-item>
+            <el-form-item label-position="left" prop="journal" label="Paper file url">
+                <el-input v-model="addPaperData.file_url" placeholder="Enter paper file url"></el-input>
+            </el-form-item>
+            <el-form-item label-position="left" prop="class" label="Paper class">
+                <el-select v-model="addPaperData.class" clearable placeholder="Choose paper class">
+                    <el-option v-for="item in classOptions" :key="item.value" :label="item.label" :value="item.value" />
+                </el-select>
+            </el-form-item>
+            <el-form-item label-position="left" prop="abstract" label="Paper abstract">
+                <el-input :autosize="{ minRows: 3, maxRows: 7 }" type="textarea" height="300"
+                    v-model="addPaperData.abstract" placeholder="Enter paper abstract"></el-input>
+            </el-form-item>
+        </el-form>
         <template #footer>
             <div class="dialog-footer">
                 <el-button @click="handleCloseAddPaper()">Cancel</el-button>
@@ -64,22 +86,54 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue';
-import { getAllPapers, deletePaper } from '../api/paper'
+import { ref, onMounted, computed, reactive } from 'vue';
+import { getAllPapers, deletePaper , addPaper, getAllBenchMarks } from '../api/paper'
 import { ElNotification } from 'element-plus'
 export default {
     name: "Paper",
     setup() {
-        const addPaperData = ref(
+        const addPaperData = reactive(
             {
                 name: "",
                 author: "",
                 journal: "",
                 abstract: "",
-                class: null,
+                class: "",
                 file_url: "",
             }
         )
+        const addPaperDataRef = ref(null)
+
+        const rules = {
+            name: [
+                { required: true, message: "Please enter paper name", trigger: "blur" },
+            ],
+            author: [
+                { required: true, message: "Please enter paper author", trigger: "blur" },
+            ],
+            journal: [
+                { required: true, message: "Please enter paper journal", trigger: "blur" },
+            ],
+            abstract: [
+                { required: true, message: "Please enter paper abstract", trigger: "blur" },
+            ],
+            class: [
+                { required: true, message: "Please choose paper class", trigger: "blur" },
+            ],
+            file_url: [
+                { required: true, message: "Please enter paper file url", trigger: "blur" },
+            ],
+        };
+
+        const benchmarks = ref(
+            [
+                { id: '1', name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", class: "单模态" },
+                { id: '2', name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", class: "单模态" },
+                { id: '3', name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", class: "单模态" },
+            ]
+        )
+        const classOptions = ref([])
+
         const paperData = ref(
             [
                 {
@@ -150,22 +204,71 @@ export default {
                 author: "",
                 journal: "",
                 abstract: "",
-                class: null,
+                class: "",
                 file_url: "",
             }
-            showAddPaper.value=false
+            showAddPaper.value = false
         }
-        const handleAddPaper=()=>{
-            
+        const handleAddPaper = () => {
+            addPaperDataRef.value.validate((valid) => {
+                if (valid) {
+                    const paperAddData = addPaperData.value
+                    addPaper(paperAddData).then(res => {
+                        if (res.success) {
+                            ElNotification({
+                                title: 'Success',
+                                message: 'Paper added successfull.',
+                                type: 'success',
+                            })
+                            handleCloseAddPaper()
+                        }
+                    })
+                }
+                else {
+                    ElNotification({
+                        title: 'Error',
+                        message: 'Validation failed.',
+                        type: 'error',
+                    })
+                }
+            })
         }
         onMounted(() => {
             // 获取到paper数据paperData.value
+            // getAllPapers().then(res => {
+            //     if (res.success) {
+            //         paperData.value = res.data
+            //         filterTableData.value = paperData.value
+            //         classFilterData.value = paperData.value.map(item => ({
+            //             text: item.class,
+            //             value: item.class,
+            //         }));
+            //     }
+            // })
 
+            // 获取假数据paperData
             filterTableData.value = paperData.value
             classFilterData.value = paperData.value.map(item => ({
                 text: item.class,
                 value: item.class,
             }));
+
+            //获取到benchmarks,将其映射到类别选项中
+            // getAllBenchMarks().then(res => {
+            //     if (res.success) {
+            //         benchmarks.value = res.data
+            //         classOptions.value = benchmarks.value.map(item => ({
+            //             label: item.name,
+            //             value: item.name,
+            //         }));
+            //     }
+            // })
+
+            // 获取benchmarks假数据
+            classOptions.value = benchmarks.value.map(item => ({
+                        label: item.name,
+                        value: item.name,
+                    }));
         });
         return {
             paperData,
@@ -176,7 +279,11 @@ export default {
             readPaper,
             hanleDelete,
             showAddPaper,
-            addPaperData
+            addPaperData,
+            addPaperDataRef,
+            classOptions,
+            rules,
+            handleCloseAddPaper,
         }
     }
 };
@@ -200,5 +307,10 @@ export default {
 
 .table {
     margin: 10px;
+}
+
+.el-select__placeholder.is-transparent {
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 </style>

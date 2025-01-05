@@ -10,7 +10,7 @@
           <NaviBar />
         </div>
         <div class="login-out">
-          <el-button class="login-out-button" size="large" type="primary" plain @click="signOut">Sign Out</el-button>
+          <el-button round class="login-out-button" size="large" type="primary" plain @click="signOut">Sign Out</el-button>
         </div>
       </el-aside>
 
@@ -107,7 +107,6 @@ export default {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 
@@ -145,6 +144,7 @@ export default {
 .naviBar {
   background-color: black;
   height: 70vh;
+  width: 100%;
 }
 
 .login-out {

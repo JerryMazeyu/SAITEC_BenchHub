@@ -13,21 +13,21 @@
         </div>
       </div>
 
-      <el-form :model="loginForm" :rules="rules" ref="loginFormRef" label-width="80px">
+      <el-form :size="large" :model="loginForm" :rules="rules" ref="loginFormRef" label-width="100px">
         <!-- 用户名输入框 -->
-        <el-form-item prop="username">
-          <div class="form-item-lable">Username</div>
+        <el-form-item label-position="top" label="UserName" prop="username">
+          <!-- <div class="form-item-lable">Username</div> -->
           <el-input v-model="loginForm.username" placeholder="Enter your username"></el-input>
         </el-form-item>
 
         <!-- 密码输入框 -->
-        <el-form-item label="" prop="password">
-          <div class="form-item-lable">Password</div>
+        <el-form-item label-position="top" label="PassWord" prop="password">
+          <!-- <div class="form-item-lable">Password</div> -->
           <el-input v-model="loginForm.password" type="password" placeholder="Enter your password"></el-input>
         </el-form-item>
 
         <!-- 登录按钮 -->
-        <el-form-item>
+        <el-form-item label-position="top">
           <el-button type="primary" @click="onSubmit">Sign In</el-button>
         </el-form-item>
       </el-form>
@@ -81,7 +81,7 @@ export default {
             else {
               ElNotification({
                 title: 'Error',
-                message: 'Validation failed.',
+                message: 'Validation failed, please check your username and password.',
                 type: 'error',
               })
             }
