@@ -7,26 +7,28 @@
           <img class="logo2" src="../assets/logo-2.png" alt="">
         </div>
         <div class="title">
-          <h1><el-icon><Tools /></el-icon>Admin Dashboard</h1>
+          <h1><el-icon>
+              <Tools />
+            </el-icon>Admin Dashboard</h1>
         </div>
       </div>
 
-      <el-form :model="loginForm" :rules="rules" ref="loginFormRef" label-width="80px">
+      <el-form :size="large" :model="loginForm" :rules="rules" ref="loginFormRef" label-width="100px">
         <!-- 用户名输入框 -->
-        <el-form-item prop="username">
-          <div class="form-item-lable">Username</div>
+        <el-form-item label-position="top" label="UserName" prop="username">
+          <!-- <div class="form-item-lable">Username</div> -->
           <el-input v-model="loginForm.username" placeholder="Enter your username"></el-input>
         </el-form-item>
 
         <!-- 密码输入框 -->
-        <el-form-item label="" prop="password">
-          <div class="form-item-lable">Password</div>
+        <el-form-item label-position="top" label="PassWord" prop="password">
+          <!-- <div class="form-item-lable">Password</div> -->
           <el-input v-model="loginForm.password" type="password" placeholder="Enter your password"></el-input>
         </el-form-item>
 
         <!-- 登录按钮 -->
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">Login</el-button>
+        <el-form-item label-position="top">
+          <el-button type="primary" @click="onSubmit">Sign In</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -35,11 +37,16 @@
 
 <script>
 import { reactive, ref } from 'vue';
-import { ElMessage } from 'element-plus';
+// import { ElMessage } from 'element-plus';
+import { ElNotification } from 'element-plus'
+import { login } from '../api/login';
+import { useRouter } from 'vue-router';
 
 export default {
   name: "LoginPage",
   setup() {
+
+    const router = useRouter()
     const loginForm = reactive({
       username: "",
       password: "",
@@ -59,9 +66,32 @@ export default {
     const onSubmit = () => {
       loginFormRef.value.validate((valid) => {
         if (valid) {
-          ElMessage.success(`Login successful with username: ${loginForm.username}`);
+          const loginData = { username: loginForm.username, password: loginForm.password }
+          login(loginData).then(res => {
+            if (res.success) {
+              localStorage.setItem('username', res.username)
+              localStorage.setItem('token', res.token)
+              router.push("/")
+              ElNotification({
+                title: 'Success',
+                message: 'Login successful with username: ${loginForm.username}.',
+                type: 'success',
+              })
+            }
+            else {
+              ElNotification({
+                title: 'Error',
+                message: 'Validation failed, please check your username and password.',
+                type: 'error',
+              })
+            }
+          })
         } else {
-          ElMessage.error("Validation failed");
+          ElNotification({
+                title: 'Error',
+                message: 'Validation failed.',
+                type: 'error',
+              })
           return false;
         }
       });
@@ -93,17 +123,17 @@ export default {
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   display: flex;
-  justify-content: left; 
+  justify-content: left;
 }
 
-.title-logo{
+.title-logo {
   display: flex;
   justify-content: left;
 }
 
-.logo{
+.logo {
   height: 70px;
-  background-color:black;
+  background-color: black;
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
@@ -121,16 +151,16 @@ export default {
 }
 
 .title {
- background: black;
- display: flex;
- justify-content: center;
- align-items: center;
- height: 70px;
- margin-left: 30px;
- color: white;
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
+  margin-left: 30px;
+  color: white;
 }
 
-.form-item-lable{
+.form-item-lable {
   color: white;
 }
 </style>

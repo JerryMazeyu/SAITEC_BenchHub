@@ -228,6 +228,8 @@ export default {
             const cachedData = localStorage.getItem('thisBenchMark');
             thisBenchMark.value = cachedData ? JSON.parse(cachedData) : {};
             console.log('获取缓存', thisBenchMark.value);
+
+            
             // // 同步获取数据集meta和数据集qa
             // // 获取数据集meta
             // loadingBenchmarkCard.value=true
