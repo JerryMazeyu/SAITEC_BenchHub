@@ -17,7 +17,7 @@
                 <n-flex class="filter-control" justify="center">
                     <n-select class="selector" v-model:value="valueClass" size="large" :options="optionsClass"
                         placeholder="Please Select The Data Category" />
-                    <n-select class="selector" size="large" disabled v-if="valueClass === 0||valueClass===null"
+                    <n-select class="selector" size="large" disabled v-if="valueClass === 0 || valueClass === null"
                         placeholder="Please Select The Benchmark" />
                     <n-select class="selector" v-else v-model:value="valueBenchmark" size="large"
                         :options="optionsBenchmark" placeholder="Please Select The Benchmark" />
@@ -118,7 +118,7 @@ export default {
                     journal: "CSDN博客",
                     abstract: "论文首先分析了语言模型中幻觉问题的来源，即模型可能生成与现实不符或误导性的文本内容。这种现象源于语言模型在无监督学习中对大规模训练语料的统计模式进行建模，却缺乏事实校验和语义理解能力。随后，作者提出了一系列减少幻觉问题的技术与非技术手段",
                     class: "文本分类",
-                    file_url:"https://arxiv.org/pdf/2305.16291",
+                    file_url: "https://arxiv.org/pdf/2305.16291",
                 },
                 {
                     name: "利用LLMs解决信息抽取任务｜综述",
@@ -126,7 +126,7 @@ export default {
                     journal: "知乎专栏",
                     abstract: "论文首先分析了语言模型中幻觉问题的来源，即模型可能生成与现实不符或误导性的文本内容。这种现象源于语言模型在无监督学习中对大规模训练语料的统计模式进行建模，却缺乏事实校验和语义理解能力。随后，作者提出了一系列减少幻觉问题的技术与非技术手段",
                     class: "信息抽取",
-                    file_url:"https://arxiv.org/pdf/2305.16291",
+                    file_url: "https://arxiv.org/pdf/2305.16291",
                 },
                 {
                     name: "大模型推理最新论文及源码合集，涵盖多模态推理、逻辑推理",
@@ -134,7 +134,7 @@ export default {
                     journal: "CSDN博客",
                     abstract: '论文首先分析了语言模型中幻觉问题的来源，即模型可能生成与现实不符或误导性的文本内容。这种现象源于语言模型在无监督学习中对大规模训练语料的统计模式进行建模，却缺乏事实校验和语义理解能力。随后，作者提出了一系列减少幻觉问题的技术与非技术手段',
                     class: "数学推理",
-                    file_url:"https://arxiv.org/pdf/2305.16291",
+                    file_url: "https://arxiv.org/pdf/2305.16291",
                 }
             ]
         );
@@ -195,7 +195,7 @@ export default {
         const valueClass = ref(null);
         const showNumber = ref(false)
         const searchQuery = ref('')
-        const page =ref(1)
+        const page = ref(1)
         const totalPage = computed(() => {
             return Math.ceil(filteredPapers.value.length / 10);
         });
@@ -234,7 +234,10 @@ export default {
         }
         const searchFilter = () => {
             loadingPapers.value = true
-            filteredPapers.value = filteredPapers.value.filter(item => item.name.includes(searchQuery.value))
+            filteredPapers.value = filteredPapers.value.filter(item =>
+                item.name.includes(searchQuery.value) || item.author.includes(searchQuery.value)
+            );
+
             setTimeout(() => {
                 loadingPapers.value = false;
             }, 500);
@@ -249,9 +252,8 @@ export default {
                 loadingPapers.value = false;
             }, 500)
         }
-        const readPaper=(fileUrl)=>{
-            if(!fileUrl)
-            {
+        const readPaper = (fileUrl) => {
+            if (!fileUrl) {
                 message.error("Invalid file URL");
                 return;
             }
@@ -273,7 +275,7 @@ export default {
             // })
 
             // 这是假数据
-            filteredPapers.value=papers.value
+            filteredPapers.value = papers.value
 
             setTimeout(() => {
                 loadingPapers.value = false;
@@ -377,7 +379,7 @@ export default {
     margin-bottom: 100px;
 }
 
-.pagination{
+.pagination {
     margin-top: 20px;
 }
 

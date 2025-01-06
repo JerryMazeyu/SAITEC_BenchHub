@@ -15,7 +15,7 @@
     <div class="tableArea">
         <el-card shadow="always">
             <div class="table">
-                <el-table stripe :data="filterTableData" style="width: 100%">
+                <el-table stripe :data="currentPapers" style="width: 100%">
                     <el-table-column show-overflow-tooltip prop="name" label="Name" />
                     <el-table-column show-overflow-tooltip prop="author" label="Author" />
                     <el-table-column show-overflow-tooltip label="Class" :filters="classFilterData"
@@ -47,6 +47,10 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                <div class="pagination">
+                    <el-pagination v-model:current-page="currentPage" size="small" background
+                        layout="prev, pager, next, jumper" :total="filterTableData.length" />
+                </div>
             </div>
         </el-card>
     </div>
@@ -87,7 +91,7 @@
 
 <script>
 import { ref, onMounted, computed, reactive } from 'vue';
-import { getAllPapers, deletePaper , addPaper, getAllBenchMarks } from '../api/paper'
+import { getAllPapers, deletePaper, addPaper, getAllBenchMarks } from '../api/paper'
 import { ElNotification } from 'element-plus'
 export default {
     name: "Paper",
@@ -162,7 +166,7 @@ export default {
                     abstract: '论文首先分析了语言模型中幻觉问题的来源，即模型可能生成与现实不符或误导性的文本内容。这种现象源于语言模型在无监督学习中对大规模训练语料的统计模式进行建模，却缺乏事实校验和语义理解能力。随后，作者提出了一系列减少幻觉问题的技术与非技术手段',
                     class: "数学推理",
                     file_url: "https://arxiv.org/pdf/2305.16291",
-                }
+                },
             ]
         );
         const search = ref('')
@@ -179,6 +183,16 @@ export default {
                 data.author.toLowerCase().includes(search.value.toLowerCase())
             )
         );
+
+        // 分页所需
+        const currentPage = ref(1)
+        const currentPapers = computed(() => {
+            const start = (currentPage.value - 1) * 10;
+            const end = currentPage.value * 10;
+            return filterTableData.value.slice(start, end);
+        });
+
+
         const readPaper = (fileUrl) => {
             // 创建一个隐藏的 <a> 标签
             const link = document.createElement('a');
@@ -248,11 +262,14 @@ export default {
 
             // 获取假数据paperData
             filterTableData.value = paperData.value
-            classFilterData.value = paperData.value.map(item => ({
-                text: item.class,
-                value: item.class,
+            classFilterData.value = Array.from(
+                new Set(
+                    paperData.value.map(item => item.class) // 提取所有的 class 值
+                )
+            ).map(uniqueClass => ({
+                text: uniqueClass,
+                value: uniqueClass,
             }));
-
             //获取到benchmarks,将其映射到类别选项中
             // getAllBenchMarks().then(res => {
             //     if (res.success) {
@@ -266,9 +283,9 @@ export default {
 
             // 获取benchmarks假数据
             classOptions.value = benchmarks.value.map(item => ({
-                        label: item.name,
-                        value: item.name,
-                    }));
+                label: item.name,
+                value: item.name,
+            }));
         });
         return {
             paperData,
@@ -276,6 +293,8 @@ export default {
             classFilterData,
             search,
             filterTableData,
+            currentPapers,
+            currentPage,
             readPaper,
             hanleDelete,
             showAddPaper,
@@ -312,5 +331,10 @@ export default {
 .el-select__placeholder.is-transparent {
     visibility: visible !important;
     opacity: 1 !important;
+}
+
+.pagination {
+    float: right;
+    margin: 20px;
 }
 </style>

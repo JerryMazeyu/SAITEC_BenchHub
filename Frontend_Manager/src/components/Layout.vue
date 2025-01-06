@@ -144,7 +144,7 @@ export default {
 .naviBar {
   background-color: black;
   height: 70vh;
-  width: 100%;
+  width: 101%;
 }
 
 .login-out {
@@ -164,10 +164,15 @@ export default {
 /* Aside 样式 */
 .asider {
   width: 200px;
-  /* 固定宽度 */
   text-align: center;
-  /* 水平居中 */
   height: 100vh;
+  overflow: hidden; /* 隐藏滚动条，但内容超出不可见 */
+  overflow-y: auto; /* 如果需要滚动功能 */
+  scrollbar-width: none; /* Firefox: 隐藏滚动条 */
+}
+
+.asider::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge 隐藏滚动条 */
 }
 
 /* Content 容器 */
