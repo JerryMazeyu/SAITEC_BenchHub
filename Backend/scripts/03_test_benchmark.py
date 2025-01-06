@@ -51,6 +51,7 @@ def get_random_testcase_id():
     printtify(f"从数据库中随机选择一个 Testcase ID: {id}", color="green")
     return id
 
+
 def get_random_folder():
     """
     从指定目录中随机选择一个文件夹。
@@ -68,7 +69,7 @@ def sync_data():
     if response.status_code == 200:
         printtify("同步成功:", data = response.json(), color="green")
     else:
-        print("同步失败:", data = response.text, color="red")
+        printtify("同步失败:", data = response.text, color="red")
         raise Exception("同步失败")
 
 def verify_testcase_count():

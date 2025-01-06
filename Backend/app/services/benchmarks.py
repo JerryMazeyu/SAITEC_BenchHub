@@ -295,6 +295,8 @@ class DataManager():
         except Exception as e:
             raise RuntimeError(f"添加 Testcase 时出错: {str(e)}")
 
+
+
     def _sync_modified_version_to_db(self, testcase_id, version, modifications):
         """
         同步修改的版本到数据库。
@@ -319,7 +321,6 @@ class DataManager():
         db.session.commit()
         print(f"数据库已同步修改后的版本 {version}。")
 
-
     def _sync_deleted_versions_to_db(self, testcase_id, version=None):
         """
         同步删除的版本到数据库，标记为已删除。
@@ -342,7 +343,6 @@ class DataManager():
         # 提交更改
         db.session.commit()
         print(f"数据库已同步删除操作：Testcase {testcase_id}。")
-
 
     def _sync_deleted_testcase_to_db(self, testcase_id):
         """
@@ -373,39 +373,47 @@ class DataManager():
             raise FileNotFoundError(f"指定的数据路径 {self.data_path} 不存在。")
 
         for folder_name in os.listdir(self.data_path):
-            folder_path = os.path.join(self.data_path, folder_name)
-            if os.path.isdir(folder_path):
-                metadata_path = os.path.join(folder_path, "meta.json")
-                
-                # 检查是否存在 meta.json
-                if not os.path.exists(metadata_path):
-                    print(f"跳过：未找到 meta.json 文件：{metadata_path}")
-                    continue
+            try:
+                folder_path = os.path.join(self.data_path, folder_name)
+                if os.path.isdir(folder_path):
+                    metadata_path = os.path.join(folder_path, "meta.json")
+                    
+                    # 检查是否存在 meta.json
+                    if not os.path.exists(metadata_path):
+                        print(f"跳过：未找到 meta.json 文件：{metadata_path}")
+                        continue
+                    # 加载 meta.json 数据
+                    with open(metadata_path, "r", encoding="utf-8") as f:
+                        metadata = json.load(f)
+                    # 提取版本信息
+                    versions = []
+                    for file_name in os.listdir(folder_path):
+                        if file_name.endswith(".json") and file_name != "meta.json":
+                            with open(os.path.join(folder_path, file_name), "r", encoding="utf-8") as f:
+                                version_data = json.load(f)
+                                if "data_content" in version_data:
+                                    version_name = os.path.splitext(file_name)[0]  # 提取文件名作为版本号
+                                    versions.append(version_name)
+                                else:
+                                    print(f"{file_name} is not valid version.")
+                    if len(versions) == 0:
+                        raise ValueError(f"{folder_name} has not enough versions.")
 
-                # 加载 meta.json 数据
-                with open(metadata_path, "r", encoding="utf-8") as f:
-                    metadata = json.load(f)
-
-                # 提取版本信息
-                versions = []
-                for file_name in os.listdir(folder_path):
-                    if file_name.endswith(".json") and file_name != "meta.json":
-                        version_name = os.path.splitext(file_name)[0]  # 提取文件名作为版本号
-                        versions.append(version_name)
-
-                # 构建本地 Benchmark 数据结构
-                local_benchmarks[folder_name] = {
-                    "id": folder_name,
-                    "data_resource": metadata.get("data_resource", ""),
-                    "data_type": metadata.get("data_type", ""),
-                    "data_dimension": metadata.get("data_dimension", ""),
-                    "description": metadata.get("description", ""),
-                    "uploader": metadata.get("uploader", ""),
-                    "answer_mode": metadata.get("answer_mode", ""),
-                    "created_at": metadata.get("created_at", ""),
-                    "versions": sorted(versions),  # 按字典序排序版本
-                    "path": folder_path,  # 本地路径
-                }
+                    # 构建本地 Benchmark 数据结构
+                    local_benchmarks[folder_name] = {
+                        "id": folder_name,
+                        "data_resource": metadata.get("data_resource", ""),
+                        "data_type": metadata.get("data_type", ""),
+                        "data_dimension": metadata.get("data_dimension", ""),
+                        "description": metadata.get("description", ""),
+                        "uploader": metadata.get("uploader", ""),
+                        "answer_mode": metadata.get("answer_mode", ""),
+                        "created_at": metadata.get("created_at", ""),
+                        "versions": sorted(versions),  # 按字典序排序版本
+                        "path": folder_path,  # 本地路径
+                    }
+            except Exception as e:
+                print(f"{folder_name} goes wrong! Wrong message is {e}")
 
         return local_benchmarks
     
