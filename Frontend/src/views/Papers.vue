@@ -139,13 +139,7 @@ export default {
             ]
         );
         const filteredPapers = ref([]);
-        const datasets = ref(
-            [
-                { id: '1', name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", class: "单模态" },
-                { id: '2', name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", class: "单模态" },
-                { id: '3', name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", class: "单模态" }
-            ]
-        )
+        const datasets = ref([])
         const optionsClass = ref(
             [
                 {
@@ -266,6 +260,20 @@ export default {
             link.click(); // 触发点击事件
             document.body.removeChild(link); // 下载完成后移除元素
         }
+        const fetchBenchmarkData = async () => {
+            try {
+                const response = await fetch("/benchmarkOptions.json"); // 替换为 JSON 文件的实际路径
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("data",data)
+                datasets.value = data;
+                console.log("datasets",datasets.value)
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
         onMounted(() => {
             loadingPapers.value = true
             // 获取所有paper
@@ -276,6 +284,8 @@ export default {
 
             // 这是假数据
             filteredPapers.value = papers.value
+
+            fetchBenchmarkData()
 
             setTimeout(() => {
                 loadingPapers.value = false;

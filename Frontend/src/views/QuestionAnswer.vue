@@ -215,7 +215,7 @@ export default {
 
         const checkMedia = (fileUrl) => {
             if (!fileUrl) {
-                message.error("Invalid file URL");
+                message.error("Invalid File URL");
                 return;
             }
             message.success("Downloading")
@@ -259,7 +259,7 @@ export default {
                         console.log("获取并处理qa", currentQA.value);
                     } else {
                         currentQA.value = [];
-                        message.info("No data was obtained");
+                        message.info("No Data Was Obtained");
                     }
                 })
                 .catch((error) => {
@@ -311,16 +311,21 @@ export default {
         }
 
         watch(page, () => {
+            // 页面变化时存储当前页数，并获取对应的数据
+            localStorage.setItem('qaPage', page.value);
             fetchQAs();
         });
 
         onMounted(() => {
+            // 初始化thisBenchMark
             const cachedData = localStorage.getItem('thisBenchMark');
             thisBenchMark.value = cachedData ? JSON.parse(cachedData) : {};
             console.log('获取缓存', thisBenchMark.value);
 
-            // 获取数据集qa
-            fetchQAs()
+            // 获取缓存的页数并加载数据
+            const cachedPage = localStorage.getItem('qaPage');
+            page.value = cachedPage ? Number(cachedPage) : 1; // 默认从第1页开始
+            fetchQAs();
         });
 
         return {
@@ -477,8 +482,8 @@ export default {
 
 .qa-media img,
 .qa-media video {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 250px;
+    max-height: 250px;
     /* 确保媒体按比例缩放 */
     border-radius: 10px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;

@@ -161,8 +161,6 @@ export default {
         Search48Regular,
         BarchartA,
         BarchartB
-        // MdArrowRoundBack,
-        // MdArrowRoundForward
     },
     setup() {
         const router = useRouter();
@@ -172,12 +170,8 @@ export default {
         const intervalChart = ref(null);
         const loadingCards = ref(false);
         const searchQuery = ref('');
-        // const message = useMessage()
 
-        const datasets = ref([
-            { id: '3', name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", class: "单模态" },
-            { id: '4', name: "视频检索", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", class: "单模态" },
-        ])
+        const datasets = ref([])
 
         const filteredDatasets = ref([]);
 
@@ -236,7 +230,25 @@ export default {
 
         const toQA = (benchmark) => {
             localStorage.setItem('thisBenchMark', JSON.stringify(benchmark));
+            localStorage.removeItem('qaPage')
             router.push("/questionAnswer")
+        };
+
+        // 获取JSON文件中的数据
+        const fetchBenchmarkData = async () => {
+            try {
+                const response = await fetch("/benchmarkOptions.json"); // 替换为 JSON 文件的实际路径
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("data",data)
+                datasets.value = data;
+                filteredDatasets.value = datasets.value;
+                console.log("datasets",datasets.value)
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
         };
 
         onMounted(() => {
@@ -244,12 +256,12 @@ export default {
             intervalChart.value = setInterval(updateChartIndex, 16000);
 
             // 获取到所有的benchmarks
-            // loadingCards.value=true
-            // getAllBenchMarks().then(res=>{
-            //     datasets.value=res.data
-            //     filteredDatasets.value=datasets.value
-            // loadingCards.value=false
-            // })
+
+            loadingCards.value=true
+            fetchBenchmarkData()
+            setTimeout(() => {
+                loadingCards.value = false;
+                    }, 500);
         });
 
         onBeforeUnmount(() => {
