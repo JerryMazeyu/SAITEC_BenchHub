@@ -215,7 +215,6 @@ def test_delete_testcase():
 def test_add_testcase():
     """
     测试新增 Testcase。
-    :param folder_path: 包含 meta.json 和 v1.json 的文件夹路径
     """
     folder_path = input("输入添加路径：")
     if not folder_path:
@@ -245,6 +244,29 @@ def test_add_testcase():
         printtify(f"添加失败", response.text, color="red")
         raise Exception("新增 Testcase 测试失败")
 
+
+def test_search_dimension():
+    """
+    测试查询dimension。
+    """
+    from time import sleep
+    response = requests.get(f"{BASE_URL}/dimensions")
+    if response.status_code == 200:
+        printtify(f"查询成功", response.json(), color="green")
+    else:
+        printtify(f"查询失败", response.text, color="red")
+        raise Exception("查询 Dimension 测试失败")
+    printtify(f"等待2s, 观察是否从缓存中查询.")
+    sleep(2)
+    response = requests.get(f"{BASE_URL}/dimensions")
+    if response.status_code == 200:
+        printtify(f"查询成功", response.json(), color="green")
+    else:
+        printtify(f"查询失败", response.text, color="red")
+        raise Exception("查询 Dimension 测试失败")
+    
+    
+    
 
 if __name__ == "__main__":
     import argparse
@@ -297,6 +319,10 @@ if __name__ == "__main__":
 
         # 测试增加
         test_add_testcase()
+
+        # 测试查询dimension
+        test_search_dimension()
+
 
     except Exception as e:
         printtify(f"测试失败: \n {e}", color="red")

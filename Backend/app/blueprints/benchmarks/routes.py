@@ -1,6 +1,7 @@
 from flask import jsonify, current_app, request
 from app.services.benchmarks import DataManager
-from app.models.testcase import Testcase
+from app.models.testcase import Testcase, Version
+from app.extensions import cache
 from . import benchmarks_bp
 
 
@@ -122,4 +123,27 @@ def add_testcase():
         return jsonify({"success": True, "data": res}), 201
 
     except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+@benchmarks_bp.route('/dimensions', methods=['GET'])
+def get_unique_dimensions():
+    """
+    获取所有唯一的 data_dimension 值，支持缓存。
+    """
+    cache_key = "unique_data_dimensions"
+    
+    # 从缓存中获取结果
+    dimensions = cache.get(cache_key)
+    if dimensions is not None:
+        current_app.logger.info("从缓存中获取 unique data_dimensions")
+        return jsonify({"success": True, "data": dimensions}), 200
+
+    # 如果缓存不存在，从数据库查询
+    current_app.logger.info("从数据库查询 unique data_dimensions")
+    try:
+        dimensions = list(set(version.data_dimension for version in Version.query.all()))
+        cache.set(cache_key, dimensions)  # 缓存结果
+        return jsonify({"success": True, "data": dimensions}), 200
+    except Exception as e:
+        current_app.logger.error(f"获取 unique data_dimensions 失败: {e}")
         return jsonify({"success": False, "message": str(e)}), 500

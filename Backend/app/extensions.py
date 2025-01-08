@@ -32,7 +32,7 @@ def init_extensions(app):
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
-    cache.init_app(app)
+    cache.init_app(app, config={"CACHE_TYPE": "SimpleCache", "CACHE_DEFAULT_TIMEOUT": 300})
 
     login_manager.unauthorized_handler = unauthorized
     login_manager.login_view = 'admin.login'
