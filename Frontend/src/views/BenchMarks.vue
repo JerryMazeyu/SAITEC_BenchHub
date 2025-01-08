@@ -128,8 +128,7 @@
             </div>
             <div class="filtered-cards">
                 <n-flex justify="center">
-                    <n-skeleton v-if="loadingCards" v-for="n in 12" :width="400" :height="100"
-                        :sharp="false"/>
+                    <n-skeleton v-if="loadingCards" v-for="n in 12" :width="400" :height="100" :sharp="false" />
                     <n-card class="filtered-card" v-else v-for="(row, index) in filteredDatasets" :key="index" hoverable
                         @click="toQA(row)" title="">
                         <n-flex>
@@ -175,17 +174,10 @@ export default {
         const searchQuery = ref('');
         // const message = useMessage()
 
-        const datasets =ref([
-            { id: '1', name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", class: "单模态" },
-            { id: '2', name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", class: "单模态" },
+        const datasets = ref([
             { id: '3', name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", class: "单模态" },
-            { id: '4', name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", class: "单模态" },
-            { id: '5', name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", class: "单模态" },
-            { id: '6', name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", class: "单模态" },
-            { id: '7', name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", class: "单模态" },
-            { id: '8', name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", class: "单模态" },
-            { id: '9', name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", class: "单模态" },
-        ]);
+            { id: '4', name: "视频检索", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", class: "单模态" },
+        ])
 
         const filteredDatasets = ref([]);
 
@@ -235,7 +227,7 @@ export default {
             }
             else {
                 loadingCards.value = true
-                filteredDatasets.value=datasets.value
+                filteredDatasets.value = datasets.value
                 setTimeout(() => {
                     loadingCards.value = false;
                 }, 500);

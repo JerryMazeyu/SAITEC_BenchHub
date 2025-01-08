@@ -24,11 +24,6 @@
             Reset
         </el-button>
     </div>
-    <div class="update-button">
-        <el-button size="large" type="success"> <el-icon>
-                <Refresh />
-            </el-icon>Sync Data</el-button>
-    </div>
     <div class="table-area">
         <el-card shadow="always">
             <div class="table">
@@ -111,6 +106,7 @@ export default {
                 })
                 return
             }
+            
         }
         const reset = () => {
             benchmarkValue.value = null
