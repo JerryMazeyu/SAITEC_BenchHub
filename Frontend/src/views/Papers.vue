@@ -113,12 +113,12 @@ export default {
         const papers = ref(
             [
                 {
-                    name: "探索语言模型在文本分类中的应用",
-                    author: "fyf2007",
-                    journal: "CSDN博客",
-                    abstract: "论文首先分析了语言模型中幻觉问题的来源，即模型可能生成与现实不符或误导性的文本内容。这种现象源于语言模型在无监督学习中对大规模训练语料的统计模式进行建模，却缺乏事实校验和语义理解能力。随后，作者提出了一系列减少幻觉问题的技术与非技术手段",
-                    class: "文本分类",
-                    file_url: "https://arxiv.org/pdf/2305.16291",
+                    "name": "自动化摘要生成的现状与发展",
+                    "author": "Jane Smith",
+                    "journal": "NLP Research Journal",
+                    "abstract": "本文探讨了自动化摘要生成领域的最新进展与挑战，分析了基于抽取式和生成式方法的优缺点。文章指出，抽取式方法具有逻辑清晰、信息准确的优点，但难以生成高度凝练的文本；而生成式方法尽管能生成更自然的摘要，却易受幻觉问题影响，导致内容不准确。为此，作者提出了一种结合知识图谱增强生成式模型的框架，以提高生成摘要的准确性和事实性。",
+                    "class": "摘要总结",
+                    "file_url": "https://arxiv.org/pdf/2307.10564"
                 },
                 {
                     name: "利用LLMs解决信息抽取任务｜综述",
@@ -267,9 +267,9 @@ export default {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log("data",data)
+                console.log("data", data)
                 datasets.value = data;
-                console.log("datasets",datasets.value)
+                console.log("datasets", datasets.value)
             } catch (error) {
                 console.error("Error fetching data:", error);
             }

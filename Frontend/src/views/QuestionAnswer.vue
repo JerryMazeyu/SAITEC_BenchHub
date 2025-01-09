@@ -24,14 +24,17 @@
                                         <n-text type="success"><b>Question <n-icon>
                                                     <QuestionCircle16Regular />
                                                 </n-icon></b></n-text>
-                                        <n-blockquote v-if="row.question.text">{{ row.question.text }}</n-blockquote>
-                                        <n-blockquote v-else>{{ row.question }}</n-blockquote>
+                                        <!-- <n-blockquote v-if="row.question.text">{{ row.question.text }}</n-blockquote>
+                                        <n-blockquote v-else>{{ row.question }}</n-blockquote> -->
+                                        <n-blockquote v-if="row.question.text"
+                                            v-html="renderMath(row.question.text)"></n-blockquote>
+                                        <n-blockquote v-else v-html="renderMath(row.question)"></n-blockquote>
                                     </div>
                                     <div class="qa">
                                         <n-text type="success"><b>Answer <n-icon>
                                                     <QuestionAnswerOutlined />
                                                 </n-icon></b></n-text>
-                                        <n-blockquote>{{ row.answer }}</n-blockquote>
+                                        <n-blockquote v-html="renderMath(row.answer)"></n-blockquote>
                                     </div>
                                     <div class="qa">
                                         <n-text type="success"><b>Check Metadata <n-icon>
@@ -83,12 +86,14 @@
                                         <n-collapse-transition :show="showOtherVersions[index]">
                                             <div class="variants" v-if="row.other_version.length > 0"
                                                 v-for="(version, index) in row.other_version">
-                                                <div><n-text type="success">Version:</n-text>{{ version.version }}</div>
-                                                <div><n-text type="success">Question:</n-text>{{ version.answer }}</div>
-                                                <div><n-text type="success">Answer:</n-text>{{ version.question }}</div>
+                                                <h4><n-text type="info">Version: {{ version.version }}</n-text></h4>
+                                                <div><n-text type="success">Question:</n-text> {{ version.answer }}
+                                                </div>
+                                                <div><n-text type="success">Answer:</n-text> {{ version.question }}
+                                                </div>
                                             </div>
                                             <div class="no-variants" v-else>
-                                                <n-alert title="No other version" type="warning">
+                                                <n-alert title="No other version" type="info">
                                                     There are no other versions of this test case
                                                 </n-alert>
                                             </div>
@@ -180,6 +185,8 @@ import { Accessibility16Regular, NumberRow16Regular, Apps20Regular, CalendarRtl2
 import { DriveFileRenameOutlineOutlined, DescriptionOutlined, ClassOutlined, QuestionAnswerOutlined } from "@vicons/material"
 import { MediaLibrary, CloudDataOps, Version } from "@vicons/carbon"
 import { getQAs } from '@/api/questionAnswer'
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
 
 export default {
     name: 'QuestionAnswer',
@@ -310,6 +317,44 @@ export default {
             return processedData;
         }
 
+        // 用于渲染数学公式
+        const renderMath = (text) => {
+            const nodes = [];
+            const regex = /\$(.*?)\$/gs; // 匹配单个 $...$ 的公式
+            let lastIndex = 0;
+            let match;
+
+            while ((match = regex.exec(text)) !== null) {
+                // 添加普通文本
+                if (lastIndex < match.index) {
+                    nodes.push(text.slice(lastIndex, match.index));
+                }
+
+                // 渲染公式
+                const formula = match[1];
+                try {
+                    const span = document.createElement('span');
+                    katex.render(formula, span, {
+                        throwOnError: false,
+                        displayMode: false, // 设置为行内模式
+                    });
+                    nodes.push(span.outerHTML);
+                } catch (e) {
+                    nodes.push(`<span class="katex-error">Error: ${formula}</span>`);
+                }
+
+                lastIndex = regex.lastIndex;
+            }
+
+            // 添加剩余普通文本
+            if (lastIndex < text.length) {
+                nodes.push(text.slice(lastIndex));
+            }
+
+            return nodes.join('');
+        };
+
+
         watch(page, () => {
             // 页面变化时存储当前页数，并获取对应的数据
             localStorage.setItem('qaPage', page.value);
@@ -341,6 +386,7 @@ export default {
             showOtherVersions,
             showMetaData,
             totalCount,
+            renderMath
         };
     }
 };
