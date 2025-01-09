@@ -4,11 +4,8 @@
         <n-grid-item :span="12">
             <div class="top-section">
                 <div class="benchmark-intro" v-if="thisBenchMark.name">
-                    <n-h2>{{ thisBenchMark.name }}</n-h2>
-                    <n-h4>{{ thisBenchMark.description }}</n-h4>
-                    <n-flex justify="center">
-                        <n-tag size="large" type="success">{{ thisBenchMark.class }}</n-tag>
-                    </n-flex>
+                    <h1>Test Cases Hub</h1>
+                    <h3>Here we provide test cases from <n-text type="success">{{ thisBenchMark.name }}</n-text></h3>
                 </div>
             </div>
         </n-grid-item>
@@ -24,29 +21,91 @@
                             <n-thing>
                                 <div class="qa-content">
                                     <div class="qa">
-                                        <n-text type="success"><b>Question</b></n-text>
-                                        <n-blockquote>{{ row.question }}</n-blockquote>
+                                        <n-text type="success"><b>Question <n-icon>
+                                                    <QuestionCircle16Regular />
+                                                </n-icon></b></n-text>
+                                        <!-- <n-blockquote v-if="row.question.text">{{ row.question.text }}</n-blockquote>
+                                        <n-blockquote v-else>{{ row.question }}</n-blockquote> -->
+                                        <n-blockquote v-if="row.question.text"
+                                            v-html="renderMath(row.question.text)"></n-blockquote>
+                                        <n-blockquote v-else v-html="renderMath(row.question)"></n-blockquote>
                                     </div>
                                     <div class="qa">
-                                        <n-text type="success"><b>Answer</b></n-text>
-                                        <n-blockquote>{{ row.answer }}</n-blockquote>
+                                        <n-text type="success"><b>Answer <n-icon>
+                                                    <QuestionAnswerOutlined />
+                                                </n-icon></b></n-text>
+                                        <n-blockquote v-html="renderMath(row.answer)"></n-blockquote>
                                     </div>
                                     <div class="qa">
-                                        <n-text type="success"><b>Check Variants</b></n-text>
-                                        <n-switch class="checkVariants" v-model:value="showVariantsArray[index]">
+                                        <n-text type="success"><b>Check Metadata <n-icon>
+                                                    <Info20Regular />
+                                                </n-icon></b></n-text>
+                                        <n-switch class="switchMeta" v-model:value="showMetaData[index]"></n-switch>
+                                        <n-collapse-transition :show="showMetaData[index]">
+                                            <div class="meta-data">
+                                                <n-h5><n-text type="success">Uploader
+                                                        <n-icon>
+                                                            <Accessibility16Regular />
+                                                        </n-icon></n-text>
+                                                </n-h5>
+                                                <div v-if="row.uploader">{{ row.uploader }}</div>
+                                                <div v-else><n-tag type="info">
+                                                        No Uploader
+                                                    </n-tag></div>
+                                                <n-h5><n-text type="success">Date Note
+                                                        <n-icon>
+                                                            <CalendarRtl28Regular />
+                                                        </n-icon>
+                                                    </n-text></n-h5>
+                                                {{ row.created_at }}
+                                                <n-h5><n-text type="success">Date Resource
+                                                        <n-icon>
+                                                            <CloudDataOps />
+                                                        </n-icon>
+                                                    </n-text></n-h5>
+                                                {{ row.data_resource }}
+                                                <n-h5><n-text type="success">Answer Mode
+                                                        <n-icon>
+                                                            <Apps20Regular />
+                                                        </n-icon>
+                                                    </n-text></n-h5>
+                                                <div v-if="row.answer_mode === 'level1'"><n-tag type="info">Open-ended
+                                                        Answer</n-tag></div>
+                                                <div v-if="row.answer_mode === 'level2'"><n-tag
+                                                        type="info">Propositional
+                                                        Answer</n-tag></div>
+                                            </div>
+                                        </n-collapse-transition>
+                                    </div>
+                                    <div class="qa">
+                                        <n-text type="success"><b>Check Variants <n-icon>
+                                                    <Version />
+                                                </n-icon></b></n-text>
+                                        <n-switch class="switchVariants" v-model:value="showOtherVersions[index]">
                                         </n-switch>
-                                        <span></span>
-                                        <n-collapse-transition :show="showVariantsArray[index]">
-                                            <div class="variants" v-for="(variant, index) in row.variants">
-                                                <div><n-text type="success">Question:</n-text>{{ variant.answer }}</div>
-                                                <div><n-text type="success">Answer:</n-text>{{ variant.question }}</div>
+                                        <n-collapse-transition :show="showOtherVersions[index]">
+                                            <div class="variants" v-if="row.other_version.length > 0"
+                                                v-for="(version, index) in row.other_version">
+                                                <h4><n-text type="info">Version: {{ version.version }}</n-text></h4>
+                                                <div><n-text type="success">Question:</n-text> {{ version.answer }}
+                                                </div>
+                                                <div><n-text type="success">Answer:</n-text> {{ version.question }}
+                                                </div>
+                                            </div>
+                                            <div class="no-variants" v-else>
+                                                <n-alert title="No other version" type="info">
+                                                    There are no other versions of this test case
+                                                </n-alert>
                                             </div>
                                         </n-collapse-transition>
                                     </div>
                                     <div class="qa-buttons">
                                         <n-flex>
-                                            <n-button strong secondary type="primary" @click="download(row.file_url)">
-                                                Download Meida File
+                                            <n-button v-if="row.question.file_url" strong secondary type="primary"
+                                                @click="checkMedia(row.question.file_url)"><template #icon>
+                                                    <MediaLibrary />
+                                                </template>
+                                                Check Meida File
                                             </n-button>
                                             <!-- 还可以继续添加其他按钮 -->
                                         </n-flex>
@@ -57,25 +116,17 @@
                             <!-- 右侧媒体 -->
                             <template #suffix>
                                 <div class="qa-media">
-                                    <template v-if="isImage(row.file_url)">
-                                        <img :src="row.file_url" alt="Image Preview" />
-                                    </template>
-                                    <template v-else-if="isVideo(row.file_url)">
-                                        <video :key="scope.row.file_url" controls>
-                                            <source :src="row.file_url" type="video/mp4" />
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    </template>
-                                    <template v-else>
-                                        <n-alert type="default">
-                                            <template #icon>
-                                                <n-icon>
-                                                    <MdFolderOpen />
-                                                </n-icon>
-                                            </template>
-                                            No Media File
-                                        </n-alert>
-                                    </template>
+                                    <div v-if="row.question.file_url">
+                                        <template v-if="isImage(row.question.file_url)">
+                                            <img :src="row.question.file_url" alt="Image Preview" />
+                                        </template>
+                                        <template v-else-if="isVideo(row.question.file_url)">
+                                            <video :key="row.question.file_url" controls>
+                                                <source :src="row.question.file_url" type="video/mp4" />
+                                                Your browser does not support the video tag.
+                                            </video>
+                                        </template>
+                                    </div>
                                 </div>
                             </template>
                         </n-list-item>
@@ -95,43 +146,31 @@
             <div class="content-section bottom-right-section">
                 <n-card :bordered="false" class="benchmark-meta-card">
                     <n-spin :show="loadingBenchmarkCard">
-                        <n-h3>Dataset Information</n-h3>
-                        <n-h5><n-text type="success">Uploader
+                        <n-h3>Benchmark Information</n-h3>
+                        <n-h5><n-text type="success">Benchmark Name
                                 <n-icon>
-                                    <Accessibility16Regular />
-                                </n-icon></n-text>
-                        </n-h5>
-                        {{ datasetInfo.uploader }}
+                                    <DriveFileRenameOutlineOutlined />
+                                </n-icon>
+                            </n-text></n-h5>
+                        <n-h3><b>{{ thisBenchMark.name }}</b></n-h3>
+                        <n-h5><n-text type="success">Benchmark Class
+                                <n-icon>
+                                    <ClassOutlined />
+                                </n-icon>
+                            </n-text></n-h5>
+                        <n-tag size="large" type="info">{{ thisBenchMark.class }}</n-tag>
+                        <n-h5><n-text type="success">Benchmark Description
+                                <n-icon>
+                                    <DescriptionOutlined />
+                                </n-icon>
+                            </n-text></n-h5>
+                        {{ thisBenchMark.description }}
                         <n-h5><n-text type="success">Total Number
                                 <n-icon>
                                     <NumberRow16Regular />
                                 </n-icon>
                             </n-text></n-h5>
-                        {{ datasetInfo.total_number }}
-                        <n-h5><n-text type="success">Update Version
-                                <n-icon>
-                                    <ArrowClockwise16Regular />
-                                </n-icon>
-                            </n-text></n-h5>
-                        <n-flex vertical>
-                            <n-alert v-for="(row, index) in datasetInfo.update_version" type="info">
-                                Version: {{ row.version }}
-                                <br>
-                                Update Time: {{ row.update_time }}
-                            </n-alert>
-                        </n-flex>
-                        <n-h5><n-text type="success">Answer Mode
-                                <n-icon>
-                                    <Apps20Regular />
-                                </n-icon>
-                            </n-text></n-h5>
-                        {{ datasetInfo.answer_mode }}
-                        <n-h5><n-text type="success">Date Note
-                                <n-icon>
-                                    <CalendarRtl28Regular />
-                                </n-icon>
-                            </n-text></n-h5>
-                        {{ datasetInfo.date_note }}
+                        <n-text type="info"><n-number-animation :from="0" :to="totalCount" /></n-text>
                     </n-spin>
                 </n-card>
             </div>
@@ -140,38 +179,33 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useMessage } from 'naive-ui'
-import { MdFolderOpen } from '@vicons/ionicons4'
-import { Accessibility16Regular, NumberRow16Regular, ArrowClockwise16Regular, Apps20Regular, CalendarRtl28Regular } from '@vicons/fluent'
-import { download } from 'naive-ui/es/_utils';
-// import {getQAs,getMeta} from '@/api/questionAnswer'
+import { Accessibility16Regular, NumberRow16Regular, Apps20Regular, CalendarRtl28Regular, QuestionCircle16Regular, Info20Regular } from '@vicons/fluent'
+import { DriveFileRenameOutlineOutlined, DescriptionOutlined, ClassOutlined, QuestionAnswerOutlined } from "@vicons/material"
+import { MediaLibrary, CloudDataOps, Version } from "@vicons/carbon"
+import { getQAs } from '@/api/questionAnswer'
+import katex from 'katex';
+import 'katex/dist/katex.min.css';
 
 export default {
     name: 'QuestionAnswer',
     components: {
         Accessibility16Regular,
         NumberRow16Regular,
-        ArrowClockwise16Regular,
         Apps20Regular,
         CalendarRtl28Regular,
-        MdFolderOpen
+        DriveFileRenameOutlineOutlined,
+        DescriptionOutlined,
+        ClassOutlined,
+        MediaLibrary,
+        CloudDataOps,
+        QuestionCircle16Regular,
+        QuestionAnswerOutlined,
+        Info20Regular,
+        Version
     },
     setup() {
-        const totalQA = ref([
-            {
-                answer: '古代“十八般武艺”中的“白打”是指徒手搏击的技艺，也可以理解为空手格斗或者自由搏击。这个词语体现了古代武艺中对身体技巧和力量的重视，即使不使用任何武器，也能凭借自身的武艺进行有效的自卫和攻击。在古代，这种技能是非常受尊敬的，因为它体现了武者的身体素质和实战能力。',
-                question: '我国古代“十八般武艺”中第十八是“白打”意思是什么？',
-                file_url: 'https://pic.superbed.cc/item/67580169fa9f77b4dc007d03.jpg',
-                variants: [
-                    { question: '我国古代“十八般武艺”中第十八是“白打”意思是什么？', answer: '古代“十八般武艺”中的“白打”是指徒手搏击的技艺，也可以理解为空手格斗或者自由搏击。这个词语体现了古代武艺中对身体技巧和力量的重视，即使不使用任何武器，也能凭借自身的武艺进行有效的自卫和攻击。在古代，这种技能是非常受尊敬的，因为它体现了武者的身体素质和实战能力。' },
-                    { question: '我国古代“十八般武艺”中第十八是“白打”意思是什么？', answer: '古代“十八般武艺”中的“白打”是指徒手搏击的技艺，也可以理解为空手格斗或者自由搏击。这个词语体现了古代武艺中对身体技巧和力量的重视，即使不使用任何武器，也能凭借自身的武艺进行有效的自卫和攻击。在古代，这种技能是非常受尊敬的，因为它体现了武者的身体素质和实战能力。' }
-                ]
-            },
-        ]);
-
-        const datasetInfo = ref({ uploader: 'Richard', total_number: 125, answer_mode: 'Open Questions', date_note: '2024-12-27', update_version: [{ version: "1.0", update_time: "2024-9-11" }, { version: "2.0", update_time: "2024-10-11" }] });
-
         const thisBenchMark = ref({});
 
         const page = ref(1)
@@ -180,14 +214,15 @@ export default {
 
         const loadingQA = ref(false)
 
-        const showVariantsArray = ref(Array(10).fill(false));
+        const showOtherVersions = ref(Array(10).fill(false));
+
+        const showMetaData = ref(Array(10).fill(false));
 
         const message = useMessage()
 
-        const download = (fileUrl) => {
-            if(!fileUrl)
-            {
-                message.error("Invalid file URL");
+        const checkMedia = (fileUrl) => {
+            if (!fileUrl) {
+                message.error("Invalid File URL");
                 return;
             }
             message.success("Downloading")
@@ -213,57 +248,145 @@ export default {
             return videoExtensions.includes(extension);
         }
 
-        const currentQA = computed(() => {
-            const start = (page.value - 1) * 10;
-            const end = page.value * 10;
-            showVariantsArray.value = Array(10).fill(false);
-            return totalQA.value.slice(start, end);
-        });
+        const currentQA = ref([])
+
+        const totalCount = ref(0)
 
         const totalPage = computed(() => {
-            return Math.ceil(totalQA.value.length / 10);
+            return Math.ceil(totalCount.value / 10);
+        });
+
+        const fetchQAs = () => {
+            loadingQA.value = true;
+            getQAs({ page: page.value, page_size: 10, data_dimension: thisBenchMark.value.name })
+                .then((res) => {
+                    totalCount.value = res.data.data.total_count;
+                    if (totalCount.value > 0) {
+                        currentQA.value = processRawData(res.data.data);
+                        console.log("获取并处理qa", currentQA.value);
+                    } else {
+                        currentQA.value = [];
+                        message.info("No Data Was Obtained");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Failed to fetch QAs:", error);
+                })
+                .finally(() => {
+                    setTimeout(() => {
+                        loadingQA.value = false;
+                    }, 500);
+                });
+        };
+
+        // 用于处理获取到的原生qa数据
+        const processRawData = (rawData) => {
+            const processedData = [];
+            const dataItems = rawData.data;
+
+            for (const key in dataItems) {
+                if (dataItems.hasOwnProperty(key)) {
+                    const item = dataItems[key];
+
+                    // 提取第一个版本（按键顺序取第一个）
+                    const [firstVersionKey, firstVersionData] = Object.entries(item)[0];
+
+                    // 构造其他版本数据
+                    const otherVersions = Object.entries(item)
+                        .filter(([versionKey]) => versionKey !== firstVersionKey)
+                        .map(([versionKey, versionData]) => ({
+                            version: versionKey,
+                            question: versionData.data_content.question,
+                            answer: versionData.data_content.answer,
+                        }));
+
+                    // 构造主数据对象
+                    processedData.push({
+                        id: key,
+                        question: firstVersionData.data_content.question,
+                        answer: firstVersionData.data_content.answer,
+                        uploader: firstVersionData.meta.uploader,
+                        answer_mode: firstVersionData.meta.answer_mode,
+                        data_resource: firstVersionData.meta.data_resource,
+                        created_at: firstVersionData.meta.created_at,
+                        other_version: otherVersions, // 其他版本数据
+                    });
+                }
+            }
+
+            return processedData;
+        }
+
+        // 用于渲染数学公式
+        const renderMath = (text) => {
+            const nodes = [];
+            const regex = /\$(.*?)\$/gs; // 匹配单个 $...$ 的公式
+            let lastIndex = 0;
+            let match;
+
+            while ((match = regex.exec(text)) !== null) {
+                // 添加普通文本
+                if (lastIndex < match.index) {
+                    nodes.push(text.slice(lastIndex, match.index));
+                }
+
+                // 渲染公式
+                const formula = match[1];
+                try {
+                    const span = document.createElement('span');
+                    katex.render(formula, span, {
+                        throwOnError: false,
+                        displayMode: false, // 设置为行内模式
+                    });
+                    nodes.push(span.outerHTML);
+                } catch (e) {
+                    nodes.push(`<span class="katex-error">Error: ${formula}</span>`);
+                }
+
+                lastIndex = regex.lastIndex;
+            }
+
+            // 添加剩余普通文本
+            if (lastIndex < text.length) {
+                nodes.push(text.slice(lastIndex));
+            }
+
+            return nodes.join('');
+        };
+
+
+        watch(page, () => {
+            // 页面变化时存储当前页数，并获取对应的数据
+            localStorage.setItem('qaPage', page.value);
+            fetchQAs();
         });
 
         onMounted(() => {
+            // 初始化thisBenchMark
             const cachedData = localStorage.getItem('thisBenchMark');
             thisBenchMark.value = cachedData ? JSON.parse(cachedData) : {};
             console.log('获取缓存', thisBenchMark.value);
 
-            
-            // // 同步获取数据集meta和数据集qa
-            // // 获取数据集meta
-            // loadingBenchmarkCard.value=true
-            // getMeta(thisBenchMark.value.id).then(res=>{
-            //     datasetInfo.value=res.data
-            // setTimeout(() => {
-            // loadingBenchmarkCard.value = false;
-            // }, 500);
-
-            // })
-            // // 获取数据集qa
-            // loadingQA.value=true
-            // getQAs(hisBenchMark.value.id).then(res=>{
-            //     totalQA.value=res.data
-            //     loadingQA.value=false
-            // setTimeout(() => {
-            // loadingQA.value = false;
-            // }, 500);
-            // })
+            // 获取缓存的页数并加载数据
+            const cachedPage = localStorage.getItem('qaPage');
+            page.value = cachedPage ? Number(cachedPage) : 1; // 默认从第1页开始
+            fetchQAs();
         });
 
         return {
             thisBenchMark,
             isImage,
             isVideo,
-            download,
-            totalQA,
+            checkMedia,
             page,
             totalPage,
             currentQA,
-            datasetInfo,
             loadingBenchmarkCard,
             loadingQA,
-            showVariantsArray
+            showOtherVersions,
+            showMetaData,
+            totalCount,
+            renderMath
         };
     }
 };
@@ -304,7 +427,7 @@ export default {
 
 .top-section {
     color: white;
-    margin-top: 70px;
+    margin-top: 50px;
     height: 200px;
     align-items: stretch;
     justify-content: center;
@@ -340,16 +463,28 @@ export default {
     /* 左侧内容占满剩余空间 */
     margin-right: 16px;
     padding: 15px;
-    /* background-color: white; */
-
 }
 
 .qa {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 
-.checkVariants {
+.switchMeta {
     margin-left: 15px;
+}
+
+.switchVariants {
+    margin-left: 25px;
+}
+
+.meta-data {
+    margin: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+    padding: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .variants {
@@ -364,6 +499,10 @@ export default {
 
 .variants:hover {
     box-shadow: 0 0 5px 2px rgba(99, 226, 183, 0.8);
+}
+
+.no-variants {
+    margin: 10px;
 }
 
 .qa-buttons {
@@ -384,21 +523,23 @@ export default {
     align-items: center;
     /* 垂直居中 */
     margin-right: 25px;
-    
+
 }
 
 .qa-media img,
 .qa-media video {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 250px;
+    max-height: 250px;
     /* 确保媒体按比例缩放 */
     border-radius: 10px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* 添加动画过渡效果 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* 添加动画过渡效果 */
 }
 
 .qa-media img:hover,
 .qa-media video:hover {
-    transform: scale(1.1); /* 悬浮时放大 */
+    transform: scale(1.1);
+    /* 悬浮时放大 */
     box-shadow: 0 0 5px 2px rgba(0, 0, 0, 0.8);
 }
 

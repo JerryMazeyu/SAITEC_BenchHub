@@ -1,13 +1,13 @@
 <template>
   <div class="navi-bar">
-    <el-menu
-      class="menu"
-      active-text-color="#ffd04b"
-      background-color="black"
-      default-active="2"
-      text-color="#fff"
-      @select="handleSelect"
-    >
+    <el-menu class="menu" active-text-color="#ffd04b" background-color="black" default-active="2" text-color="#fff"
+      @select="handleSelect">
+      <el-menu-item index="/home">
+        <el-icon>
+          <House />
+        </el-icon>
+        <span>Home</span>
+      </el-menu-item>
       <el-menu-item index="/paper">
         <el-icon>
           <Document />
@@ -25,7 +25,6 @@
 </template>
 
 <script lang="ts" setup>
-import { Document, ChatDotRound } from '@element-plus/icons-vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -41,7 +40,8 @@ const handleSelect = (key: string) => {
 <style>
 .navi-bar {
   height: 100%;
-  width: 100%; /* 占满父组件 */
+  width: 100%;
+  /* 占满父组件 */
 }
 
 .menu {

@@ -113,12 +113,12 @@ export default {
         const papers = ref(
             [
                 {
-                    name: "探索语言模型在文本分类中的应用",
-                    author: "fyf2007",
-                    journal: "CSDN博客",
-                    abstract: "论文首先分析了语言模型中幻觉问题的来源，即模型可能生成与现实不符或误导性的文本内容。这种现象源于语言模型在无监督学习中对大规模训练语料的统计模式进行建模，却缺乏事实校验和语义理解能力。随后，作者提出了一系列减少幻觉问题的技术与非技术手段",
-                    class: "文本分类",
-                    file_url: "https://arxiv.org/pdf/2305.16291",
+                    "name": "自动化摘要生成的现状与发展",
+                    "author": "Jane Smith",
+                    "journal": "NLP Research Journal",
+                    "abstract": "本文探讨了自动化摘要生成领域的最新进展与挑战，分析了基于抽取式和生成式方法的优缺点。文章指出，抽取式方法具有逻辑清晰、信息准确的优点，但难以生成高度凝练的文本；而生成式方法尽管能生成更自然的摘要，却易受幻觉问题影响，导致内容不准确。为此，作者提出了一种结合知识图谱增强生成式模型的框架，以提高生成摘要的准确性和事实性。",
+                    "class": "摘要总结",
+                    "file_url": "https://arxiv.org/pdf/2307.10564"
                 },
                 {
                     name: "利用LLMs解决信息抽取任务｜综述",
@@ -139,13 +139,7 @@ export default {
             ]
         );
         const filteredPapers = ref([]);
-        const datasets = ref(
-            [
-                { id: '1', name: "文本分类", description: "将文本划分为不同的类别或标签。可以应用于垃圾邮件过滤、情感分析、新闻分类等应用场景", class: "单模态" },
-                { id: '2', name: "信息抽取", description: "指模型能够根据文本内容，完成内容、实体、事件、属性、关系等信息的抽取", class: "单模态" },
-                { id: '3', name: "数学推理", description: "指理解和应用数学概念、原理来解决涉及数学运算问题的能力。如解析表达式、图形识别、公式推导等", class: "单模态" }
-            ]
-        )
+        const datasets = ref([])
         const optionsClass = ref(
             [
                 {
@@ -266,6 +260,20 @@ export default {
             link.click(); // 触发点击事件
             document.body.removeChild(link); // 下载完成后移除元素
         }
+        const fetchBenchmarkData = async () => {
+            try {
+                const response = await fetch("/benchmarkOptions.json"); // 替换为 JSON 文件的实际路径
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log("data", data)
+                datasets.value = data;
+                console.log("datasets", datasets.value)
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
         onMounted(() => {
             loadingPapers.value = true
             // 获取所有paper
@@ -276,6 +284,8 @@ export default {
 
             // 这是假数据
             filteredPapers.value = papers.value
+
+            fetchBenchmarkData()
 
             setTimeout(() => {
                 loadingPapers.value = false;
